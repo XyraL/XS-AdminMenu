@@ -1,4 +1,4 @@
-// Cipher-Admin — Resource Manager Panel
+// XS-AdminMenu — Resource Manager Panel
 
 let _resourceFilter = '';
 let _resourceList   = [];
@@ -7,7 +7,7 @@ function loadResources() {
     const panel = document.getElementById('panel-resources');
     if (!panel) return;
 
-    caFetch('cipher-admin:server:getResources', {}).then(function(data) {
+    caFetch('XS-AdminMenu:server:getResources', {}).then(function(data) {
         _resourceList = data || [];
         renderResourcesTable();
     });
@@ -70,7 +70,7 @@ caAction('resDoRestart', (d) => doRestartResource(d.name));
 
 function doRestartResource(name) {
     closeModal();
-    caFetch('cipher-admin:server:restartResource', { name: name }).then(function(ok) {
+    caFetch('XS-AdminMenu:server:restartResource', { name: name }).then(function(ok) {
         if (ok) {
             setTimeout(loadResources, 2500);
         }

@@ -1,4 +1,4 @@
-// Cipher-Admin — Core primitives
+// XS-AdminMenu — Core primitives
 //
 // Output escaping, the icon set and click delegation: needed by every panel,
 // owned by none of them.
@@ -8,6 +8,10 @@
 // is not optional. Panels emit data-* attributes and a delegated listener
 // dispatches them, rather than interpolating values into inline handlers where
 // an apostrophe breaks the row and a crafted name does worse.
+
+// The NUI host must equal the resource folder name exactly, and that name is
+// case-sensitive on Linux servers. Ask the game for it rather than hardcoding.
+const CA_RESOURCE = typeof GetParentResourceName === 'function' ? GetParentResourceName() : 'XS-AdminMenu';
 
 // ── Escaping ────────────────────────────────────────────────────────────────
 

@@ -1,4 +1,4 @@
-// Cipher-Admin — Entity Inspector Panel
+// XS-AdminMenu — Entity Inspector Panel
 
 let _entityRadius = 150;
 
@@ -8,7 +8,7 @@ function loadEntities() {
 
     panel.innerHTML = '<div class="empty-state"><div class="empty-text">Scanning nearby entities...</div></div>';
 
-    fetch('https://cipher-admin/ca_getEntities', {
+    fetch(`https://${CA_RESOURCE}/ca_getEntities`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ radius: _entityRadius }),
@@ -77,7 +77,7 @@ function renderEntities(panel, data) {
 
 function deleteEntityByNet(netId) {
     if (!netId || netId === 0) return;
-    fetch('https://cipher-admin/ca_deleteEntityByNet', {
+    fetch(`https://${CA_RESOURCE}/ca_deleteEntityByNet`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ netId: netId }),

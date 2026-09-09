@@ -1,4 +1,4 @@
-// Cipher-Admin — Item Spawner Panel
+// XS-AdminMenu — Item Spawner Panel
 //
 // Browses the server's real item list rather than a table in this resource, so
 // it shows whatever the server actually installed. Reuses the existing
@@ -50,7 +50,7 @@ async function renderItemsPanel() {
     if (search) search.oninput = function () { _itemFilter = this.value.toLowerCase(); _renderItemGrid(); };
 
     if (!_items.length) {
-        const data = await caFetch('cipher-admin:server:getItemList', {});
+        const data = await caFetch('XS-AdminMenu:server:getItemList', {});
         _items = data || [];
     }
 
@@ -132,7 +132,7 @@ caAction('itemsTargetSelf', () => {
 });
 
 caAction('itemsPickTarget', async () => {
-    const players = await caFetch('cipher-admin:server:getPlayers', {}) || [];
+    const players = await caFetch('XS-AdminMenu:server:getPlayers', {}) || [];
     if (!players.length) {
         openModal('No players online', '<p class="text-muted">Nobody to give items to.</p>',
             '<button class="btn btn-ghost" onclick="closeModal()">OK</button>');
@@ -161,7 +161,7 @@ caAction('itemsSetTarget', (d) => {
 caAction('itemGive', async (d) => {
     const count = Math.max(1, parseInt((document.getElementById('items-count') || {}).value) || 1);
 
-    const ok = await caFetch('cipher-admin:server:giveItem', {
+    const ok = await caFetch('XS-AdminMenu:server:giveItem', {
         item:       d.name,
         count:      count,
         targetSrc:  _itemTargetSrc,

@@ -1,10 +1,10 @@
-// Cipher-Admin — Reports Panel
+// XS-AdminMenu — Reports Panel
 
 let _reports      = [];
 let _reportStatus = 'open';
 
 function loadReports() {
-    caFetch('cipher-admin:server:getReports', { status: _reportStatus }).then(function(data) {
+    caFetch('XS-AdminMenu:server:getReports', { status: _reportStatus }).then(function(data) {
         _reports = data || [];
         renderReports();
     });
@@ -80,7 +80,7 @@ function openReportActions(r) {
 
 function doClaimReport(id) {
     closeModal();
-    caFetch('cipher-admin:server:claimReport', { id: id }).then(loadReports);
+    caFetch('XS-AdminMenu:server:claimReport', { id: id }).then(loadReports);
 }
 
 function openRespondModal(r) {
@@ -105,12 +105,12 @@ function doRespondReport(r) {
     const resp = (document.getElementById('report-resp') || {}).value || '';
     if (!resp.trim()) return;
     closeModal();
-    caFetch('cipher-admin:server:respondReport', { id: r.id, citizenid: r.citizenid, player_name: r.player_name, response: resp.trim() }).then(loadReports);
+    caFetch('XS-AdminMenu:server:respondReport', { id: r.id, citizenid: r.citizenid, player_name: r.player_name, response: resp.trim() }).then(loadReports);
 }
 
 function doCloseReport(id) {
     closeModal();
-    caFetch('cipher-admin:server:closeReport', { id: id }).then(loadReports);
+    caFetch('XS-AdminMenu:server:closeReport', { id: id }).then(loadReports);
 }
 
 function _fmtReportTime(ts) {

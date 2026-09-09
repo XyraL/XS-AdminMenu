@@ -1,4 +1,4 @@
-// Cipher-Admin — Player List Panel
+// XS-AdminMenu — Player List Panel
 
 let _players       = [];
 let _selectedPlayer = null;
@@ -35,7 +35,7 @@ async function loadPlayers() {
         </div>
     `;
 
-    const data = await caFetch('cipher-admin:server:getPlayers', {});
+    const data = await caFetch('XS-AdminMenu:server:getPlayers', {});
     _players = data || [];
     document.getElementById('badge-players').textContent = _players.length;
     renderPlayersTable();
@@ -133,7 +133,7 @@ async function selectPlayer(src) {
     _selectedPlayer = p;
 
     // Fetch full profile
-    const profile = await caFetch('cipher-admin:server:getCharacter', p.citizenid);
+    const profile = await caFetch('XS-AdminMenu:server:getCharacter', p.citizenid);
     openPlayerProfile({ ...p, ...profile, onlineSrc: src });
 }
 
@@ -339,7 +339,7 @@ function renderPlayerProfile(p) {
 
 // ── Player action relay ───────────────────────────────────────────────────────
 function playerAction(action, targetSrc, targetCid, targetName, extra = {}) {
-    fetch('https://cipher-admin/playerAction', {
+    fetch(`https://${CA_RESOURCE}/playerAction`, {
         method: 'POST',
         body: JSON.stringify({ action, targetSrc, targetCid, targetName, ...extra }),
     });
@@ -366,7 +366,7 @@ function doKick(src, cid, name) {
 }
 
 async function deleteWarning(warnId, cid, src) {
-    await caFetch('cipher-admin:server:deleteWarning', { warnId, citizenid: cid });
+    await caFetch('XS-AdminMenu:server:deleteWarning', { warnId, citizenid: cid });
     selectPlayer(src);
 }
 
@@ -398,7 +398,7 @@ function setWarnReason(r) { const el = document.getElementById('warn-reason'); i
 async function doWarn(src, cid, name) {
     const reason = document.getElementById('warn-reason').value.trim();
     if (!reason) return;
-    await caFetch('cipher-admin:server:warnPlayer', {
+    await caFetch('XS-AdminMenu:server:warnPlayer', {
         targetSrc: src, citizenid: cid, playerName: name, reason
     });
     closeModal();
@@ -446,7 +446,7 @@ async function applyBanLadder(cid) {
     const sel = document.getElementById('ban-duration');
     if (!note || !sel) return;
 
-    const history = cid ? await caFetch('cipher-admin:server:getBanHistory', { citizenid: cid }) : null;
+    const history = cid ? await caFetch('XS-AdminMenu:server:getBanHistory', { citizenid: cid }) : null;
     if (!document.getElementById('ban-history-note')) return;   // modal closed meanwhile
 
     const count = (history && history.count) || 0;
@@ -476,7 +476,7 @@ async function doBan(src, cid, name) {
     const reason   = document.getElementById('ban-reason').value.trim();
     const duration = parseInt(document.getElementById('ban-duration').value);
     if (!reason) return;
-    await caFetch('cipher-admin:server:banPlayer', {
+    await caFetch('XS-AdminMenu:server:banPlayer', {
         targetSrc: src, targetCid: cid, targetName: name,
         reason, duration, permanent: duration === 0,
     });
@@ -503,10 +503,10 @@ function openSetMoneyModal(src, cid, name, cash, bank) {
 async function doSetMoney(src, cid, name) {
     const cash = parseInt(document.getElementById('set-cash').value) || 0;
     const bank = parseInt(document.getElementById('set-bank').value) || 0;
-    await fetch('https://cipher-admin/playerAction', {
+    await fetch(`https://${CA_RESOURCE}/playerAction`, {
         method: 'POST', body: JSON.stringify({ action: 'setcash', targetSrc: src, targetCid: cid, targetName: name, amount: cash })
     });
-    await fetch('https://cipher-admin/playerAction', {
+    await fetch(`https://${CA_RESOURCE}/playerAction`, {
         method: 'POST', body: JSON.stringify({ action: 'setbank', targetSrc: src, targetCid: cid, targetName: name, amount: bank })
     });
     closeModal();
@@ -532,7 +532,7 @@ async function doSetJob(src, cid, name) {
     const job   = document.getElementById('set-job').value.trim();
     const grade = parseInt(document.getElementById('set-grade').value) || 0;
     if (!job) return;
-    await fetch('https://cipher-admin/playerAction', {
+    await fetch(`https://${CA_RESOURCE}/playerAction`, {
         method: 'POST', body: JSON.stringify({ action: 'setjob', targetSrc: src, targetCid: cid, targetName: name, job, grade })
     });
     closeModal();
@@ -541,7 +541,7 @@ async function doSetJob(src, cid, name) {
 async function addNote(cid, name) {
     const input = document.getElementById('note-input-' + cid);
     if (!input || !input.value.trim()) return;
-    await caFetch('cipher-admin:server:addNote', { citizenid: cid, playerName: name, note: input.value.trim() });
+    await caFetch('XS-AdminMenu:server:addNote', { citizenid: cid, playerName: name, note: input.value.trim() });
     input.value = '';
 }
 
@@ -558,7 +558,7 @@ async function openGiveWeaponModal(src, cid, name) {
         '<button class="btn btn-ghost" onclick="closeModal()">Cancel</button>');
 
     if (!_weapons.length) {
-        const data = await caFetch('cipher-admin:server:getWeaponList', {});
+        const data = await caFetch('XS-AdminMenu:server:getWeaponList', {});
         _weapons      = (data && data.weapons) || [];
         _weaponSource = (data && data.source)  || '';
     }
@@ -675,7 +675,7 @@ function confirmSummonAll() {
 
 async function doSummonAll() {
     closeModal();
-    const ok = await caFetch('cipher-admin:server:summonAll', {});
+    const ok = await caFetch('XS-AdminMenu:server:summonAll', {});
     if (ok) loadPlayers();
 }
 
@@ -745,7 +745,7 @@ caAction('playerBtn', (d) => {
 // Freeze All skips other staff server-side, so an admin cannot lock out
 // everyone who could undo it.
 caAction('massAction', async (d) => {
-    const res = await caFetch('cipher-admin:server:massAction', {
+    const res = await caFetch('XS-AdminMenu:server:massAction', {
         action: d.act,
         state:  d.state === 'true',
         radius: 50.0,
@@ -875,7 +875,7 @@ caAction('doMute', async (d) => {
     const reason   = (document.getElementById('mute-reason') || {}).value || 'No reason given';
     const duration = parseInt((document.getElementById('mute-duration') || {}).value) || 0;
     closeModal();
-    await caFetch('cipher-admin:server:mutePlayer', {
+    await caFetch('XS-AdminMenu:server:mutePlayer', {
         citizenid: d.cid, targetSrc: Number(d.src), playerName: d.name,
         reason: reason, duration: duration,
     });
@@ -883,7 +883,7 @@ caAction('doMute', async (d) => {
 
 caAction('doUnmute', async (d) => {
     closeModal();
-    await caFetch('cipher-admin:server:mutePlayer', {
+    await caFetch('XS-AdminMenu:server:mutePlayer', {
         citizenid: d.cid, targetSrc: Number(d.src), playerName: d.name, unmute: true,
     });
 });
@@ -894,7 +894,7 @@ async function openIdentifiersModal(src, cid, name) {
         '<div class="empty-state"><div class="empty-text">Loading...</div></div>',
         '<button class="btn btn-ghost" onclick="closeModal()">Close</button>');
 
-    const ids = await caFetch('cipher-admin:server:getPlayerIdentifiers', {
+    const ids = await caFetch('XS-AdminMenu:server:getPlayerIdentifiers', {
         targetSrc: src, targetCid: cid, targetName: name,
     });
 

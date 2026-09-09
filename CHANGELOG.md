@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to **Cipher-Admin**.
+All notable changes to **XS-AdminMenu**.
 
 ## [1.3.0] — 2026-08-17
 
@@ -73,7 +73,7 @@ Re-upload the whole folder — this release adds new files, and missing one caus
   `getInventory` when the player isn't found and `getCharacter` on a search
   that matches nothing, so a failed lookup hung the panel instead of showing
   an empty state. Every NUI response now substitutes `false` for a nil
-  payload. Found while fixing the same bug in Cipher-Trucking.
+  payload. Found while fixing the same bug in XS-Trucking.
 
 ## [1.1.2] — 2026-07-31
 
@@ -126,7 +126,7 @@ Re-upload the whole folder — this release adds new files, and missing one caus
   text glyphs and colour emoji, which rendered at different weights and in the
   platform's own palette rather than the theme's.
 - **Command-deck theme** — neutral graphite with a red authority accent,
-  deliberately distinct from the rest of the Cipher suite so staff tooling
+  deliberately distinct from the rest of my scripts so staff tooling
   never looks like player tooling. Accent and danger are separated by weight
   rather than hue: accents are outlines and thin bars, destructive actions are
   solid fills.

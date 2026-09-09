@@ -1,4 +1,4 @@
-// Cipher-Admin — Server Stats Panel
+// XS-AdminMenu — Server Stats Panel
 
 function loadStats() {
     const panel = document.getElementById('panel-stats');
@@ -6,7 +6,7 @@ function loadStats() {
 
     panel.innerHTML = '<div class="empty-state"><div class="empty-icon">&#x23F3;</div><div class="empty-text">Loading stats...</div></div>';
 
-    caFetch('cipher-admin:server:getStats', {}).then(function(d) {
+    caFetch('XS-AdminMenu:server:getStats', {}).then(function(d) {
         if (!d || typeof d !== 'object') {
             panel.innerHTML = '<div class="empty-state"><div class="empty-icon">&#x26A0;</div><div class="empty-text">No response from server — check server console</div></div>';
             return;

@@ -1,4 +1,4 @@
--- Cipher-Admin Server — Identity, Ban Matching & Alt Linking
+-- XS-AdminMenu Server — Identity, Ban Matching & Alt Linking
 --
 -- A ban used to store three columns (license, ip, discord) and check each in
 -- turn, which is defeated by changing one of them — and offline bans usually
@@ -15,12 +15,12 @@
 -- hotspots and campuses share one. For the same reason a clean account linked
 -- to a banned one raises a flag rather than a denial.
 
-local IsAdmin       = function(src) return exports['cipher-admin']:IsAdmin(src) end
-local HasPermission = function(src, p) return exports['cipher-admin']:HasPermission(src, p) end
-local AcFlag        = function(...) pcall(function(...) exports['cipher-admin']:AcFlag(...) end, ...) end
+local IsAdmin       = function(src) return exports['XS-AdminMenu']:IsAdmin(src) end
+local HasPermission = function(src, p) return exports['XS-AdminMenu']:HasPermission(src, p) end
+local AcFlag        = function(...) pcall(function(...) exports['XS-AdminMenu']:AcFlag(...) end, ...) end
 
 -- Load marker for the boot self-check in server/main.lua.
-CipherAdminIdentity = true
+XSAdminIdentity = true
 
 local BE = Config.BanEvasion or { Enabled = false, MatchOn = {} }
 
@@ -280,7 +280,7 @@ AddEventHandler('playerConnecting', function(playerName, _, deferrals)
     -- A database hiccup must not silently become a whitelist in reverse: on
     -- error the player gets in and the console says why.
     if not ok then
-        print(('^1[cipher-admin]^0 connect check errored, allowing connection: %s'):format(tostring(result)))
+        print(('^1[XS-AdminMenu]^0 connect check errored, allowing connection: %s'):format(tostring(result)))
         deferrals.done()
         return
     end
@@ -338,15 +338,15 @@ AddEventHandler('onResourceStart', function(res)
     end
 
     if backfilled > 0 then
-        print(('[Cipher-Admin] Ban evasion: backfilled %d identifier(s) from existing bans.'):format(backfilled))
+        print(('[XS-AdminMenu] Ban evasion: backfilled %d identifier(s) from existing bans.'):format(backfilled))
     end
-    print('[Cipher-Admin] Ban evasion: ' .. (BE.Enabled and 'active.' or 'disabled in config.'))
+    print('[XS-AdminMenu] Ban evasion: ' .. (BE.Enabled and 'active.' or 'disabled in config.'))
 end)
 
 -- ── NUI callbacks ─────────────────────────────────────────────────────────────
 
 -- Takes a citizenid (character profile) or a license (ban record).
-lib.callback.register('cipher-admin:server:getLinkedAccounts', function(src, data)
+lib.callback.register('XS-AdminMenu:server:getLinkedAccounts', function(src, data)
     if not IsAdmin(src) then return nil end
     if not HasPermission(src, 'viewlinked') then return nil end
 
@@ -393,7 +393,7 @@ lib.callback.register('cipher-admin:server:getLinkedAccounts', function(src, dat
 end)
 
 -- Recent evasion activity for the Threats panel's second tab.
-lib.callback.register('cipher-admin:server:getEvasionHits', function(src)
+lib.callback.register('XS-AdminMenu:server:getEvasionHits', function(src)
     if not IsAdmin(src) then return nil end
     if not HasPermission(src, 'viewlinked') then return nil end
 

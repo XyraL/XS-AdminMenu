@@ -1,4 +1,4 @@
--- Cipher-Admin Server — Chat Mutes
+-- XS-AdminMenu Server — Chat Mutes
 --
 -- Persisted rather than held in memory: a mute that evaporates on the next
 -- restart is not a moderation tool, it is a suggestion.
@@ -9,13 +9,13 @@
 -- either silently do nothing or hard-depend on one of them. If you run
 -- pma-voice, Config.MuteVoiceExport lets you name the export to call.
 
-local IsAdmin       = function(src) return exports['cipher-admin']:IsAdmin(src) end
-local HasPermission = function(src, p) return exports['cipher-admin']:HasPermission(src, p) end
-local GetAdminCache = function(src) return exports['cipher-admin']:GetAdminCache(src) end
-local Audit         = function(...) exports['cipher-admin']:Audit(...) end
+local IsAdmin       = function(src) return exports['XS-AdminMenu']:IsAdmin(src) end
+local HasPermission = function(src, p) return exports['XS-AdminMenu']:HasPermission(src, p) end
+local GetAdminCache = function(src) return exports['XS-AdminMenu']:GetAdminCache(src) end
+local Audit         = function(...) exports['XS-AdminMenu']:Audit(...) end
 
 -- Load marker for the boot self-check in server/main.lua.
-CipherAdminMutes = true
+XSAdminMutes = true
 
 -- citizenid -> { expires = os.time() or 0 for permanent, reason }
 -- Mirrors the table so the chat hook is a table lookup rather than a query on
@@ -78,13 +78,13 @@ AddEventHandler('chatMessage', function(src)
     if not muted then return end
 
     CancelEvent()
-    TriggerClientEvent('cipher-admin:client:mutedNotice', src, {
+    TriggerClientEvent('XS-AdminMenu:client:mutedNotice', src, {
         reason  = m.reason,
         expires = m.expires,
     })
 end)
 
-lib.callback.register('cipher-admin:server:mutePlayer', function(src, data)
+lib.callback.register('XS-AdminMenu:server:mutePlayer', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'mute') then return false end
 
@@ -99,7 +99,7 @@ lib.callback.register('cipher-admin:server:mutePlayer', function(src, data)
         _muted[cid] = nil
         Audit(src, 'UNMUTE', data.playerName, cid, nil)
         if data.targetSrc then
-            TriggerClientEvent('cipher-admin:client:mutedNotice', tonumber(data.targetSrc), { unmuted = true })
+            TriggerClientEvent('XS-AdminMenu:client:mutedNotice', tonumber(data.targetSrc), { unmuted = true })
         end
         return { success = true, muted = false }
     end
@@ -129,7 +129,7 @@ lib.callback.register('cipher-admin:server:mutePlayer', function(src, data)
     end
 
     if data.targetSrc then
-        TriggerClientEvent('cipher-admin:client:mutedNotice', tonumber(data.targetSrc), {
+        TriggerClientEvent('XS-AdminMenu:client:mutedNotice', tonumber(data.targetSrc), {
             reason  = data.reason,
             expires = _muted[cid].expires,
             fresh   = true,
@@ -143,7 +143,7 @@ lib.callback.register('cipher-admin:server:mutePlayer', function(src, data)
     return { success = true, muted = true }
 end)
 
-lib.callback.register('cipher-admin:server:getMutes', function(src)
+lib.callback.register('XS-AdminMenu:server:getMutes', function(src)
     if not IsAdmin(src) then return nil end
     if not HasPermission(src, 'mute') then return nil end
     return MySQL.query.await([[
@@ -171,7 +171,7 @@ AddEventHandler('onResourceStart', function(res)
     ]])
 
     local n = LoadMutes()
-    if n > 0 then print(('[Cipher-Admin] %d active mute(s) loaded.'):format(n)) end
+    if n > 0 then print(('[XS-AdminMenu] %d active mute(s) loaded.'):format(n)) end
 end)
 
 -- For a chat resource that does not fire chatMessage.

@@ -1,4 +1,4 @@
-// Cipher-Admin — Inventory Viewer Panel
+// XS-AdminMenu — Inventory Viewer Panel
 
 let _invTarget     = null;
 let _invTargetName = '';
@@ -69,7 +69,7 @@ async function _renderInventoryContent() {
     const modeBtn = document.getElementById('inv-mode-btn');
     if (modeBtn) modeBtn.style.display = _invTarget ? 'inline-flex' : 'none';
 
-    const targetData = await caFetch('cipher-admin:server:getInventory', {
+    const targetData = await caFetch('XS-AdminMenu:server:getInventory', {
         invId: _invTarget, targetCid: _invTarget, targetSrc: _invTargetSrc,
         targetName: _invTargetName,
     });
@@ -84,7 +84,7 @@ async function _renderInventoryContent() {
     const canClear = hasPermission('clearinv');
 
     if (_invMode === 'compare') {
-        const adminData = await caFetch('cipher-admin:server:getAdminInventory', {});
+        const adminData = await caFetch('XS-AdminMenu:server:getAdminInventory', {});
         if (!adminData) {
             el.innerHTML = '<div class="empty-state"><div class="empty-icon">▦</div><div class="empty-text">Could not load your inventory (ox_inventory only)</div></div>';
             return;
@@ -224,7 +224,7 @@ caAction('invRemove', (d) => doRemoveItem(d.name, d.label));
 async function doRemoveItem(name, label) {
     let count = parseInt((document.getElementById('rem-count') || {}).value) || 1;
     closeModal();
-    await caFetch('cipher-admin:server:removeItem', {
+    await caFetch('XS-AdminMenu:server:removeItem', {
         targetSrc: _invTargetSrc, targetCid: _invTarget, invId: _invTarget,
         targetName: _invTargetName, item: name, count: count,
     });
@@ -247,7 +247,7 @@ caAction('invDoTransfer', (d) => doTransfer(d.name, d.dir));
 async function doTransfer(name, direction) {
     let count = parseInt((document.getElementById('xfer-count') || {}).value) || 1;
     closeModal();
-    const ok = await caFetch('cipher-admin:server:transferItem', {
+    const ok = await caFetch('XS-AdminMenu:server:transferItem', {
         targetSrc: _invTargetSrc, targetCid: _invTarget, invId: _invTarget,
         targetName: _invTargetName, item: name, count: count, direction: direction,
     });
@@ -258,7 +258,7 @@ async function doTransfer(name, direction) {
 // ── Give item ─────────────────────────────────────────────────────────────────
 async function openGiveItemModal() {
     if (!_itemList.length) {
-        _itemList = await caFetch('cipher-admin:server:getItemList', {}) || [];
+        _itemList = await caFetch('XS-AdminMenu:server:getItemList', {}) || [];
     }
     openModal('Give Item',
         '<div class="form-group"><label>Search Item</label>'
@@ -300,7 +300,7 @@ async function doGiveItem() {
     let count = parseInt((document.getElementById('give-item-count') || {}).value) || 1;
     if (!item) return;
     closeModal();
-    await caFetch('cipher-admin:server:giveItem', {
+    await caFetch('XS-AdminMenu:server:giveItem', {
         targetSrc: _invTargetSrc, targetCid: _invTarget, invId: _invTarget,
         targetName: _invTargetName, item: item, count: count,
     });
@@ -317,7 +317,7 @@ function confirmClearInventory() {
 
 async function doClearInventory() {
     closeModal();
-    await caFetch('cipher-admin:server:clearInventory', {
+    await caFetch('XS-AdminMenu:server:clearInventory', {
         targetSrc: _invTargetSrc, targetCid: _invTarget, invId: _invTarget, targetName: _invTargetName,
     });
     await _renderInventoryContent();

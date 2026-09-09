@@ -1,4 +1,4 @@
-// Cipher-Admin — Character Lookup Panel
+// XS-AdminMenu — Character Lookup Panel
 
 // Character-panel action button. Same reasoning as _profileButtons in
 // players.js: target details ride on data-* attributes so a name containing
@@ -56,7 +56,7 @@ async function searchCharacter() {
     const res = document.getElementById('char-results');
     res.innerHTML = '<div class="empty-state"><div class="empty-icon">◎</div><div class="empty-text">Searching...</div></div>';
 
-    const results = await caFetch('cipher-admin:server:searchCharacter', q);
+    const results = await caFetch('XS-AdminMenu:server:searchCharacter', q);
     if (!results || !results.length) {
         res.innerHTML = '<div class="empty-state"><div class="empty-icon">◎</div><div class="empty-text">No characters found</div></div>';
         return;
@@ -97,7 +97,7 @@ async function searchCharacter() {
 }
 
 async function openCharProfile(citizenid) {
-    const profile = await caFetch('cipher-admin:server:getCharacter', citizenid);
+    const profile = await caFetch('XS-AdminMenu:server:getCharacter', citizenid);
     if (!profile) return;
 
     const ci  = profile.charinfo || {};
@@ -206,7 +206,7 @@ async function doOfflineBan(cid, name) {
     const reason   = document.getElementById('offban-reason').value.trim();
     const duration = parseInt(document.getElementById('offban-duration').value);
     if (!reason) return;
-    await caFetch('cipher-admin:server:banPlayer', {
+    await caFetch('XS-AdminMenu:server:banPlayer', {
         targetCid: cid, targetName: name, reason, duration, permanent: duration === 0
     });
     closeModal();
@@ -231,7 +231,7 @@ async function doDeleteChar(cid, name) {
         inp.style.borderColor = 'var(--red)';
         return;
     }
-    const result = await caFetch('cipher-admin:server:deleteCharacter', { citizenid: cid, name: name });
+    const result = await caFetch('XS-AdminMenu:server:deleteCharacter', { citizenid: cid, name: name });
     closeModal();
     if (result && result.success) {
         openModal('Character Deleted', '<p style="color:var(--green)">' + esc(name) + ' has been permanently removed from the database.</p>',

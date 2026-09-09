@@ -1,4 +1,4 @@
-// Cipher-Admin — Self Actions Panel
+// XS-AdminMenu — Self Actions Panel
 //
 // The grid is generated from the registry below rather than hand-written in
 // index.html, where every new action needed markup, a routing line and a Lua
@@ -217,7 +217,7 @@ function selfBtn(key) {
         }
     }
 
-    fetch('https://cipher-admin/selfAction', {
+    fetch(`https://${CA_RESOURCE}/selfAction`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: key })
@@ -226,7 +226,7 @@ function selfBtn(key) {
 
 function _selfSend(action, extra) {
     const body = Object.assign({ action: action }, extra || {});
-    fetch('https://cipher-admin/selfAction', {
+    fetch(`https://${CA_RESOURCE}/selfAction`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
     });
 }
@@ -427,7 +427,7 @@ caAction('applySlowmo', function () {
 });
 
 function selfCopyVector(action) {
-    fetch('https://cipher-admin/selfAction', {
+    fetch(`https://${CA_RESOURCE}/selfAction`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: action || 'copyvector' })
@@ -468,7 +468,7 @@ window.selfApplyPed = function() {
     const m = (document.getElementById('ped-inp') || {}).value || '';
     if (!m) return;
     closeModal();
-    fetch('https://cipher-admin/selfAction', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'pedmodel', model: m }) });
+    fetch(`https://${CA_RESOURCE}/selfAction`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'pedmodel', model: m }) });
 };
 
 function selfPropModal() {
@@ -483,7 +483,7 @@ window.selfApplyProp = function() {
     const f = document.getElementById('prop-frz') ? document.getElementById('prop-frz').checked : true;
     if (!m) return;
     closeModal();
-    fetch('https://cipher-admin/selfAction', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'spawnprop', model: m, frozen: f }) });
+    fetch(`https://${CA_RESOURCE}/selfAction`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'spawnprop', model: m, frozen: f }) });
 };
 
 function selfAnnounceModal() {
@@ -497,7 +497,7 @@ window.selfSendAnnounce = function() {
     const msg  = (document.getElementById('ann-msg')  || {}).value || '';
     let type = (document.getElementById('ann-type') || {}).value || 'inform';
     if (!msg) return;
-    caFetch('cipher-admin:server:announce', { message: msg, type: type });
+    caFetch('XS-AdminMenu:server:announce', { message: msg, type: type });
     closeModal();
 };
 
@@ -512,7 +512,7 @@ function selfWeatherModal() {
 window.selfApplyWeather = function() {
     const w = (document.getElementById('wx-sel') || {}).value;
     if (!w) return;
-    caFetch('cipher-admin:server:setWeather', { weather: w });
+    caFetch('XS-AdminMenu:server:setWeather', { weather: w });
     closeModal();
 };
 
@@ -526,6 +526,6 @@ function selfTimeModal() {
 window.selfApplyTime = function() {
     const h = parseInt((document.getElementById('t-hr') || {}).value) || 12;
     const m = parseInt((document.getElementById('t-mn') || {}).value) || 0;
-    caFetch('cipher-admin:server:setTime', { hour: h, minute: m });
+    caFetch('XS-AdminMenu:server:setTime', { hour: h, minute: m });
     closeModal();
 };

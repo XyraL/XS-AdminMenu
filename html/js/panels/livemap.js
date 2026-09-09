@@ -114,7 +114,7 @@ function lmPopup(p) {
 async function refreshLiveMap() {
     if (!_lm) return;
 
-    const players = await caFetch('cipher-admin:server:getLiveMap', {});
+    const players = await caFetch('XS-AdminMenu:server:getLiveMap', {});
     if (!Array.isArray(players)) return;
 
     const count = document.getElementById('livemap-count');

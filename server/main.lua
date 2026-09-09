@@ -1,4 +1,4 @@
--- Cipher-Admin Server Core — permissions engine, auth, audit
+-- XS-AdminMenu Server Core — permissions engine, auth, audit
 
 -- Names any server file that failed to load, rather than letting the symptom
 -- be a stream of "attempt to index a nil value (global 'Framework')" from a
@@ -18,18 +18,18 @@ CreateThread(function()
     -- 1.2.0 added two server files. Each sets a marker on load so a partial
     -- upload is named here rather than surfacing as an unrelated nil index
     -- somewhere else — which is exactly how the 1.1.0 bridge/ miss presented.
-    if CipherAdminThreats  == nil then missing[#missing + 1] = 'server/threats.lua'  end
-    if CipherAdminIdentity == nil then missing[#missing + 1] = 'server/identity.lua' end
-    if CipherAdminMutes    == nil then missing[#missing + 1] = 'server/mutes.lua'    end
+    if XSAdminThreats  == nil then missing[#missing + 1] = 'server/threats.lua'  end
+    if XSAdminIdentity == nil then missing[#missing + 1] = 'server/identity.lua' end
+    if XSAdminMutes    == nil then missing[#missing + 1] = 'server/mutes.lua'    end
 
     if #missing == 0 then return end
 
-    print('^1[cipher-admin] ─────────────────────────────────────────────^0')
-    print('^1[cipher-admin] STARTUP INCOMPLETE — these files did not load:^0')
-    for _, f in ipairs(missing) do print(('^1[cipher-admin]   • %s^0'):format(f)) end
-    print('^1[cipher-admin] Re-upload the ENTIRE cipher-admin folder, including^0')
-    print('^1[cipher-admin] any NEW directories, then restart the resource.^0')
-    print('^1[cipher-admin] ─────────────────────────────────────────────^0')
+    print('^1[XS-AdminMenu] ─────────────────────────────────────────────^0')
+    print('^1[XS-AdminMenu] STARTUP INCOMPLETE — these files did not load:^0')
+    for _, f in ipairs(missing) do print(('^1[XS-AdminMenu]   • %s^0'):format(f)) end
+    print('^1[XS-AdminMenu] Re-upload the ENTIRE XS-AdminMenu folder, including^0')
+    print('^1[XS-AdminMenu] any NEW directories, then restart the resource.^0')
+    print('^1[XS-AdminMenu] ─────────────────────────────────────────────^0')
 end)
 
 -- Wraps every lib.callback.register so a handler that errors still responds.
@@ -45,7 +45,7 @@ do
             local results = { pcall(fn, src, ...) }
 
             if not results[1] then
-                print(('^1[cipher-admin]^0 callback "%s" errored — returning nil so the UI does not hang.\n  %s')
+                print(('^1[XS-AdminMenu]^0 callback "%s" errored — returning nil so the UI does not hang.\n  %s')
                     :format(name, tostring(results[2])))
                 return nil
             end
@@ -115,7 +115,7 @@ local function SeedDefaultRoles()
             role.name, role.label, role.color, json.encode(role.permissions)
         })
     end
-    print('[Cipher-Admin] Default roles seeded.')
+    print('[XS-AdminMenu] Default roles seeded.')
 end
 
 -- ── Permission check ──────────────────────────────────────────────────────────
@@ -182,7 +182,7 @@ local function Audit(adminSrc, action, targetName, targetCid, details)
     if Config.AuditWebhook ~= '' then
         PerformHttpRequest(Config.AuditWebhook, function() end, 'POST', json.encode({
             embeds = {{
-                title  = 'Cipher-Admin: ' .. action,
+                title  = 'XS-AdminMenu: ' .. action,
                 color  = 15158332,
                 fields = {
                     { name = 'Admin',   value = aName or 'N/A',      inline = true },
@@ -230,11 +230,11 @@ local function TrySyncOn(res, h, m)
     end)
 
     if ok then
-        print(('[Cipher-Admin] Time set via %s.'):format(res))
+        print(('[XS-AdminMenu] Time set via %s.'):format(res))
         return true
     end
 
-    print(('^3[cipher-admin]^0 %s is running but its time API did not accept the call.'):format(res))
+    print(('^3[XS-AdminMenu]^0 %s is running but its time API did not accept the call.'):format(res))
     return false
 end
 
@@ -274,7 +274,7 @@ AddEventHandler('onResourceStart', function(res)
     LoadAssignments()
     local roleCount = 0
     for _ in pairs(_roles) do roleCount = roleCount + 1 end
-    print('[Cipher-Admin] Ready. Roles loaded: ' .. roleCount)
+    print('[XS-AdminMenu] Ready. Roles loaded: ' .. roleCount)
 end)
 
 -- ── Join-time tracking (for online duration) ─────────────────────────────────
@@ -288,8 +288,8 @@ AddEventHandler('playerDropped', function()
 end)
 
 -- ── Admin Chat ────────────────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:server:adminChat')
-AddEventHandler('cipher-admin:server:adminChat', function(message)
+RegisterNetEvent('XS-AdminMenu:server:adminChat')
+AddEventHandler('XS-AdminMenu:server:adminChat', function(message)
     local src = source
     if not IsAdmin(src) then return end
     if not message or message == '' then return end
@@ -303,13 +303,13 @@ AddEventHandler('cipher-admin:server:adminChat', function(message)
     for _, psrc in ipairs(GetPlayers()) do
         local pid = tonumber(psrc)
         if _adminCache[pid] then
-            TriggerClientEvent('cipher-admin:client:adminChat', pid, data)
+            TriggerClientEvent('XS-AdminMenu:client:adminChat', pid, data)
         end
     end
 end)
 
 -- ── NUI: Open admin panel ─────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:open', function(src)
+lib.callback.register('XS-AdminMenu:server:open', function(src)
     if not IsAdmin(src) then return nil end
     local a = _adminCache[src]
 
@@ -350,7 +350,7 @@ lib.callback.register('cipher-admin:server:open', function(src)
 end)
 
 -- ── Admin duty toggle ─────────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:setAdminDuty', function(src, data)
+lib.callback.register('XS-AdminMenu:server:setAdminDuty', function(src, data)
     if not IsAdmin(src) then return false end
     local a = _adminCache[src]
     if not a or not a.citizenid then return false end
@@ -368,13 +368,13 @@ lib.callback.register('cipher-admin:server:setAdminDuty', function(src, data)
     return true
 end)
 
-lib.callback.register('cipher-admin:server:getDutyAdmins', function(src)
+lib.callback.register('XS-AdminMenu:server:getDutyAdmins', function(src)
     if not IsAdmin(src) then return nil end
     return _dutyAdmins
 end)
 
 -- ── NUI: Get online players ───────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:getPlayers', function(src)
+lib.callback.register('XS-AdminMenu:server:getPlayers', function(src)
     if not IsAdmin(src) then return nil end
     local result = {}
     for _, psrc in ipairs(GetPlayers()) do
@@ -407,7 +407,7 @@ lib.callback.register('cipher-admin:server:getPlayers', function(src)
 end)
 
 -- ── NUI: Get audit log ────────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:getAudit', function(src, data)
+lib.callback.register('XS-AdminMenu:server:getAudit', function(src, data)
     if not IsAdmin(src) then return nil end
     if not HasPermission(src, 'viewaudit') then return nil end
     data = data or {}
@@ -431,7 +431,7 @@ lib.callback.register('cipher-admin:server:getAudit', function(src, data)
 end)
 
 -- ── NUI: Get roles for permissions panel ─────────────────────────────────────
-lib.callback.register('cipher-admin:server:getRoles', function(src)
+lib.callback.register('XS-AdminMenu:server:getRoles', function(src)
     if not IsAdmin(src) then return nil end
     if not HasPermission(src, 'manageroles') then return nil end
     local rows = MySQL.query.await('SELECT * FROM admin_roles ORDER BY id ASC')
@@ -446,7 +446,7 @@ lib.callback.register('cipher-admin:server:getRoles', function(src)
 end)
 
 -- ── NUI: Save role permissions ────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:saveRolePermissions', function(src, data)
+lib.callback.register('XS-AdminMenu:server:saveRolePermissions', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'manageroles') then return false end
     MySQL.update.await('UPDATE admin_roles SET permissions=? WHERE name=?', {
@@ -461,7 +461,7 @@ lib.callback.register('cipher-admin:server:saveRolePermissions', function(src, d
 end)
 
 -- ── NUI: Assign role to player ────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:assignRole', function(src, data)
+lib.callback.register('XS-AdminMenu:server:assignRole', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'assignroles') then return false end
     if not data.citizenid or not data.role then return false end
@@ -486,7 +486,7 @@ lib.callback.register('cipher-admin:server:assignRole', function(src, data)
 end)
 
 -- ── NUI: Remove role from player ──────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:removeRole', function(src, data)
+lib.callback.register('XS-AdminMenu:server:removeRole', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'assignroles') then return false end
     MySQL.update.await('DELETE FROM admin_assignments WHERE citizenid=?', { data.citizenid })
@@ -504,14 +504,14 @@ lib.callback.register('cipher-admin:server:removeRole', function(src, data)
 end)
 
 -- ── NUI: Get admin staff list ─────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:getStaff', function(src)
+lib.callback.register('XS-AdminMenu:server:getStaff', function(src)
     if not IsAdmin(src) then return nil end
     if not HasPermission(src, 'assignroles') then return nil end
     return MySQL.query.await('SELECT a.*, r.label as role_label, r.color as role_color FROM admin_assignments a LEFT JOIN admin_roles r ON r.name = a.role ORDER BY a.created_at DESC')
 end)
 
 -- ── NUI: Search players offline (character lookup) ────────────────────────────
-lib.callback.register('cipher-admin:server:searchCharacter', function(src, query)
+lib.callback.register('XS-AdminMenu:server:searchCharacter', function(src, query)
     if not IsAdmin(src) then return nil end
     if not query or #query < 2 then return {} end
     local s = '%' .. query .. '%'
@@ -533,7 +533,7 @@ lib.callback.register('cipher-admin:server:searchCharacter', function(src, query
 end)
 
 -- ── NUI: Get full character profile ──────────────────────────────────────────
-lib.callback.register('cipher-admin:server:getCharacter', function(src, citizenid)
+lib.callback.register('XS-AdminMenu:server:getCharacter', function(src, citizenid)
     if not IsAdmin(src) then return nil end
     local p = MySQL.single.await([[
         SELECT p.citizenid, p.charinfo, p.job, p.money, p.metadata
@@ -566,7 +566,7 @@ lib.callback.register('cipher-admin:server:getCharacter', function(src, citizeni
 end)
 
 -- ── NUI: Add note ─────────────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:addNote', function(src, data)
+lib.callback.register('XS-AdminMenu:server:addNote', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'addnote') then return false end
     local a = _adminCache[src]
@@ -578,11 +578,11 @@ lib.callback.register('cipher-admin:server:addNote', function(src, data)
 end)
 
 -- ── NUI: Server announcement ──────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:announce', function(src, data)
+lib.callback.register('XS-AdminMenu:server:announce', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'announcement') then return false end
     local a = _adminCache[src]
-    TriggerClientEvent('cipher-admin:client:announcement', -1, {
+    TriggerClientEvent('XS-AdminMenu:client:announcement', -1, {
         message   = data.message,
         adminName = a and a.name or 'Server',
         type      = data.type or 'info',
@@ -592,7 +592,7 @@ lib.callback.register('cipher-admin:server:announce', function(src, data)
 end)
 
 -- ── NUI: Set weather ──────────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:setWeather', function(src, data)
+lib.callback.register('XS-AdminMenu:server:setWeather', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'weather') then return false end
     local w = data.weather or 'CLEAR'
@@ -607,17 +607,17 @@ lib.callback.register('cipher-admin:server:setWeather', function(src, data)
         pcall(function() exports['cd_easytime']:SetWeather(w) end)
     end
     -- Broadcast to all clients (works standalone or as fallback)
-    TriggerClientEvent('cipher-admin:client:setWeather', -1, w)
+    TriggerClientEvent('XS-AdminMenu:client:setWeather', -1, w)
     Audit(src, 'SET_WEATHER', nil, nil, w)
     return true
 end)
 
 -- ── NUI: Mass announce with optional countdown ───────────────────────────────
-lib.callback.register('cipher-admin:server:massAnnounce', function(src, data)
+lib.callback.register('XS-AdminMenu:server:massAnnounce', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'announcement') then return false end
     local a = _adminCache[src]
-    TriggerClientEvent('cipher-admin:client:announcement', -1, {
+    TriggerClientEvent('XS-AdminMenu:client:announcement', -1, {
         message   = data.message,
         adminName = a and a.name or 'Server',
         type      = data.type or 'inform',
@@ -628,7 +628,7 @@ lib.callback.register('cipher-admin:server:massAnnounce', function(src, data)
 end)
 
 -- ── NUI: Set time ─────────────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:setTime', function(src, data)
+lib.callback.register('XS-AdminMenu:server:setTime', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'time') then return false end
     local h = data.hour
@@ -644,21 +644,21 @@ lib.callback.register('cipher-admin:server:setTime', function(src, data)
         -- case the client broadcast below is the whole change and will stick —
         -- or something does and is not in the list, in which case it will fight
         -- back and this line is the clue that says so.
-        print(('^3[cipher-admin]^0 Set Time: no known time resource detected. If the time '
+        print(('^3[XS-AdminMenu]^0 Set Time: no known time resource detected. If the time '
             .. 'reverts, set Config.TimeResource to whatever runs your clock '
             .. '(checked: %s).'):format(table.concat(TIME_RESOURCES_CHECKED, ', ')))
     end
 
     -- Always broadcast to clients — if nothing owns the clock this is the only
     -- change; if something does, the call above already updated it.
-    TriggerClientEvent('cipher-admin:client:setTime', -1, h, m)
+    TriggerClientEvent('XS-AdminMenu:client:setTime', -1, h, m)
 
     Audit(src, 'SET_TIME', nil, nil, h .. ':' .. string.format('%02d', m))
     return true
 end)
 
 -- ── NUI: Delete character ─────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:deleteCharacter', function(src, data)
+lib.callback.register('XS-AdminMenu:server:deleteCharacter', function(src, data)
     if not IsAdmin(src) then return { success = false, reason = 'Not admin' } end
     if not HasPermission(src, 'deletechar') then return { success = false, reason = 'No permission' } end
     local cid = data and data.citizenid
@@ -685,7 +685,7 @@ lib.callback.register('cipher-admin:server:deleteCharacter', function(src, data)
 end)
 
 -- ── NUI: Summon All ───────────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:summonAll', function(src)
+lib.callback.register('XS-AdminMenu:server:summonAll', function(src)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'summonall') then return false end
     local pos = GetEntityCoords(GetPlayerPed(src))
@@ -693,8 +693,8 @@ lib.callback.register('cipher-admin:server:summonAll', function(src)
         local pid = tonumber(psrc)
         if pid ~= src then
             -- Every one of these is about to make an impossible-looking jump.
-            pcall(function() exports['cipher-admin']:AcExempt(pid) end)
-            TriggerClientEvent('cipher-admin:client:teleport', pid, { x = pos.x, y = pos.y, z = pos.z })
+            pcall(function() exports['XS-AdminMenu']:AcExempt(pid) end)
+            TriggerClientEvent('XS-AdminMenu:client:teleport', pid, { x = pos.x, y = pos.y, z = pos.z })
         end
     end
     Audit(src, 'SUMMON_ALL', nil, nil, string.format('%.0f, %.0f, %.0f', pos.x, pos.y, pos.z))
@@ -702,9 +702,9 @@ lib.callback.register('cipher-admin:server:summonAll', function(src)
 end)
 
 -- ── NUI: Server Stats ─────────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:getStats', function(src)
+lib.callback.register('XS-AdminMenu:server:getStats', function(src)
     if not IsAdmin(src) then
-        print('[cipher-admin] getStats: IsAdmin failed for src ' .. tostring(src))
+        print('[XS-AdminMenu] getStats: IsAdmin failed for src ' .. tostring(src))
         return { error = 'not admin' }
     end
     local ok, result = pcall(function()
@@ -734,7 +734,7 @@ lib.callback.register('cipher-admin:server:getStats', function(src)
         }
     end)
     if not ok then
-        print('[cipher-admin] getStats error: ' .. tostring(result))
+        print('[XS-AdminMenu] getStats error: ' .. tostring(result))
         return { error = tostring(result) }
     end
     return result
@@ -766,7 +766,7 @@ local function PruneOldData()
     end
 
     if #pruned > 0 then
-        print('[Cipher-Admin] Retention sweep removed ' .. table.concat(pruned, ', ') .. '.')
+        print('[XS-AdminMenu] Retention sweep removed ' .. table.concat(pruned, ', ') .. '.')
     end
 end
 

@@ -1,4 +1,4 @@
-// Cipher-Admin — Dashboard Panel
+// XS-AdminMenu — Dashboard Panel
 
 function loadDashboard(data) {
     const panel = document.getElementById('panel-dashboard');
@@ -101,7 +101,7 @@ function loadDashboard(data) {
 // that renders with a dash in one tile is better than one that does not render.
 async function loadDashLive() {
     if (hasPermission('viewthreats')) {
-        const t = await caFetch('cipher-admin:server:getThreats', { unhandled: true });
+        const t = await caFetch('XS-AdminMenu:server:getThreats', { unhandled: true });
         const v = document.getElementById('dash-threat-value');
         const s = document.getElementById('dash-threat-sub');
         if (v && t) {
@@ -120,7 +120,7 @@ async function loadDashLive() {
         if (s) s.textContent = 'no access';
     }
 
-    const reports = await caFetch('cipher-admin:server:getReports', { status: 'open' });
+    const reports = await caFetch('XS-AdminMenu:server:getReports', { status: 'open' });
     const rv = document.getElementById('dash-report-value');
     if (rv) rv.textContent = Array.isArray(reports) ? reports.length : 0;
 }
@@ -130,7 +130,7 @@ async function loadRecentActivity() {
         document.getElementById('dash-activity').innerHTML = emptyState('lock', 'No audit access');
         return;
     }
-    const rows = await caFetch('cipher-admin:server:getAudit', {});
+    const rows = await caFetch('XS-AdminMenu:server:getAudit', {});
     const el   = document.getElementById('dash-activity');
     if (!el) return;
     if (!rows || !rows.length) {
@@ -153,7 +153,7 @@ async function loadDutyAdmins() {
     const list  = document.getElementById('dash-duty-list');
     const count = document.getElementById('dash-duty-count');
     if (!list) return;
-    const duty = await caFetch('cipher-admin:server:getDutyAdmins', {}) || {};
+    const duty = await caFetch('XS-AdminMenu:server:getDutyAdmins', {}) || {};
     CA.dutyAdmins = duty;
     const entries = Object.entries(duty);
     if (count) count.textContent = entries.length + ' online';
@@ -199,7 +199,7 @@ async function sendAnnouncement() {
     const msg  = document.getElementById('ann-msg').value.trim();
     const type = document.getElementById('ann-type').value;
     if (!msg) return;
-    await caFetch('cipher-admin:server:announce', { message: msg, type });
+    await caFetch('XS-AdminMenu:server:announce', { message: msg, type });
     closeModal();
 }
 
@@ -221,7 +221,7 @@ function openWeatherModal() {
 
 async function setWeather() {
     const weather = document.getElementById('weather-type').value;
-    await caFetch('cipher-admin:server:setWeather', { weather });
+    await caFetch('XS-AdminMenu:server:setWeather', { weather });
     closeModal();
 }
 
@@ -255,19 +255,19 @@ function setTimePreset(h) {
 async function setTime() {
     const hour   = parseInt(document.getElementById('time-hour').value) || 0;
     const minute = parseInt(document.getElementById('time-min').value)  || 0;
-    await caFetch('cipher-admin:server:setTime', { hour, minute });
+    await caFetch('XS-AdminMenu:server:setTime', { hour, minute });
     closeModal();
 }
 
 // ── Self actions ──────────────────────────────────────────────────────────────
 function toggleNoclip() {
-    fetch('https://cipher-admin/playerAction', {
+    fetch(`https://${CA_RESOURCE}/playerAction`, {
         method: 'POST', body: JSON.stringify({ action: 'noclip' })
     });
 }
 
 function toggleInvisible() {
-    fetch('https://cipher-admin/playerAction', {
+    fetch(`https://${CA_RESOURCE}/playerAction`, {
         method: 'POST', body: JSON.stringify({ action: 'invisible' })
     });
 }

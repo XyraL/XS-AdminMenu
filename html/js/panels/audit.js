@@ -1,4 +1,4 @@
-// Cipher-Admin — Audit Log Panel
+// XS-AdminMenu — Audit Log Panel
 
 const AUDIT_ACTIONS = [
     'KICK','WARN','TEMPBAN','PERMBAN','UNBAN',
@@ -59,7 +59,7 @@ async function runAuditSearch() {
     const dateFrom = document.getElementById('audit-from')?.value || '';
     const dateTo   = document.getElementById('audit-to')?.value   || '';
 
-    const rows = await caFetch('cipher-admin:server:getAudit', { action, admin, dateFrom, dateTo });
+    const rows = await caFetch('XS-AdminMenu:server:getAudit', { action, admin, dateFrom, dateTo });
     renderAuditTable(rows || []);
 }
 

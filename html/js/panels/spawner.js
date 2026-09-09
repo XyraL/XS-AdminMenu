@@ -1,4 +1,4 @@
-// Cipher-Admin — Vehicle Spawner Panel
+// XS-AdminMenu — Vehicle Spawner Panel
 
 let _vehicleList     = {};
 let _activeCategory  = null;
@@ -30,7 +30,7 @@ async function loadSpawner() {
     `;
 
     if (Object.keys(_vehicleList).length === 0) {
-        const data = await caFetch('cipher-admin:server:getVehicleList', {});
+        const data = await caFetch('XS-AdminMenu:server:getVehicleList', {});
         // The server groups and labels; the panel renders what it is given.
         _vehicleList   = (data && data.categories) || {};
         _vehicleSource = (data && data.source) || '';
@@ -106,7 +106,7 @@ function spawnVehicle(model) {
 
     const targetSrc  = window._spawnTargetSrc  || null;
     const targetName = window._spawnTargetName || null;
-    fetch('https://cipher-admin/playerAction', {
+    fetch(`https://${CA_RESOURCE}/playerAction`, {
         method: 'POST',
         body: JSON.stringify({ action: 'spawnveh', targetSrc, targetName, model }),
     });

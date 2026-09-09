@@ -1,4 +1,4 @@
--- Cipher-Admin Client — Detection Agent
+-- XS-AdminMenu Client — Detection Agent
 --
 -- Anything the server can read for itself is read in server/threats.lua, where
 -- the client cannot lie about it. This reports the one thing with no
@@ -30,7 +30,7 @@ CreateThread(function()
 
         local ped = PlayerPedId()
         if ped and ped ~= 0 and DoesEntityExist(ped) then
-            TriggerServerEvent('cipher-admin:server:heartbeat', {
+            TriggerServerEvent('XS-AdminMenu:server:heartbeat', {
                 armour = GetPedArmour(ped),
             })
         end
@@ -40,8 +40,8 @@ end)
 -- Staff with viewthreats receive flags as they happen. The server sends only
 -- the first hit of each type per player, so a speed hack is one notification
 -- rather than one per sweep.
-RegisterNetEvent('cipher-admin:client:threatFlag')
-AddEventHandler('cipher-admin:client:threatFlag', function(payload)
+RegisterNetEvent('XS-AdminMenu:client:threatFlag')
+AddEventHandler('XS-AdminMenu:client:threatFlag', function(payload)
     if type(payload) ~= 'table' then return end
 
     SendNUIMessage({ type = 'threatFlag', data = payload })

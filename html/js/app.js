@@ -1,4 +1,4 @@
-// Cipher-Admin — Core NUI Bridge
+// XS-AdminMenu — Core NUI Bridge
 
 const CA = {
     admin:            null,
@@ -15,7 +15,7 @@ const CA = {
 // ── NUI fetch wrapper ──────────────────────────────────────────────────────────
 async function caFetch(endpoint, data = {}) {
     try {
-        const res = await fetch(`https://cipher-admin/${endpoint}`, {
+        const res = await fetch(`https://${CA_RESOURCE}/${endpoint}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data),
@@ -139,7 +139,7 @@ function onClose() {
 }
 
 function closeAdmin() {
-    fetch('https://cipher-admin/close', { method: 'POST', body: JSON.stringify({}) });
+    fetch(`https://${CA_RESOURCE}/close`, { method: 'POST', body: JSON.stringify({}) });
     onClose();
 }
 
@@ -173,7 +173,7 @@ function _updateDutyBtn() {
 async function toggleAdminDuty() {
     CA.onDuty = !CA.onDuty;
     _updateDutyBtn();
-    await caFetch('cipher-admin:server:setAdminDuty', { onDuty: CA.onDuty });
+    await caFetch('XS-AdminMenu:server:setAdminDuty', { onDuty: CA.onDuty });
     if (CA.currentPanel === 'dashboard') loadDutyAdmins();
 }
 

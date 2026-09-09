@@ -1,10 +1,10 @@
--- Cipher-Admin Server — Resource Manager
+-- XS-AdminMenu Server — Resource Manager
 
-local IsAdmin       = function(src) return exports['cipher-admin']:IsAdmin(src) end
-local HasPermission = function(src, p) return exports['cipher-admin']:HasPermission(src, p) end
-local Audit         = function(...) exports['cipher-admin']:Audit(...) end
+local IsAdmin       = function(src) return exports['XS-AdminMenu']:IsAdmin(src) end
+local HasPermission = function(src, p) return exports['XS-AdminMenu']:HasPermission(src, p) end
+local Audit         = function(...) exports['XS-AdminMenu']:Audit(...) end
 
-lib.callback.register('cipher-admin:server:getResources', function(src)
+lib.callback.register('XS-AdminMenu:server:getResources', function(src)
     if not IsAdmin(src) then return nil end
     local result = {}
     for i = 0, GetNumResources() - 1 do
@@ -18,7 +18,7 @@ lib.callback.register('cipher-admin:server:getResources', function(src)
     return result
 end)
 
-lib.callback.register('cipher-admin:server:restartResource', function(src, data)
+lib.callback.register('XS-AdminMenu:server:restartResource', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'restartresource') then return false end
     local name = data and data.name

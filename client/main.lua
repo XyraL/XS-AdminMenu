@@ -1,4 +1,4 @@
--- Cipher-Admin Client
+-- XS-AdminMenu Client
 
 -- Every in-game message goes through Notify() so a server with its own styled
 -- notifications does not get one resource shouting in a different voice.
@@ -25,7 +25,7 @@ function Notify(opts)
         if cfg.CustomEvent and cfg.CustomEvent ~= '' then
             TriggerEvent(cfg.CustomEvent, title, desc, ntype, opts.duration or cfg.Duration or 5000)
         else
-            print('^3[cipher-admin]^0 Config.Notify.Resource is "custom" but CustomEvent is empty.')
+            print('^3[XS-AdminMenu]^0 Config.Notify.Resource is "custom" but CustomEvent is empty.')
         end
 
     elseif mode == 'chat' then
@@ -68,7 +68,7 @@ local spectateTarget = nil
 -- ── Open / Close ──────────────────────────────────────────────────────────────
 local function OpenAdmin()
     if isOpen then return end
-    lib.callback('cipher-admin:server:open', false, function(data)
+    lib.callback('XS-AdminMenu:server:open', false, function(data)
         if not data then
             Notify({ title = 'Access Denied', description = 'You do not have admin access.', type = 'error' })
             return
@@ -88,8 +88,8 @@ end
 
 -- The mapping name stays fixed: FiveM stores each player's rebind against it,
 -- so renaming would discard everyone's chosen key. OpenPanel is a chat alias.
-RegisterKeyMapping('cipher_admin_open', 'Open Cipher-Admin', 'keyboard', Config.OpenKey)
-RegisterCommand('cipher_admin_open', function()
+RegisterKeyMapping('xs_adminmenu_open', 'Open XS-AdminMenu', 'keyboard', Config.OpenKey)
+RegisterCommand('xs_adminmenu_open', function()
     if isOpen then CloseAdmin() else OpenAdmin() end
 end, false)
 
@@ -125,56 +125,56 @@ end
 
 -- Register all server callback proxies
 local PROXY_ENDPOINTS = {
-    'cipher-admin:server:open',
-    'cipher-admin:server:getPlayers',
-    'cipher-admin:server:getAudit',
-    'cipher-admin:server:getRoles',
-    'cipher-admin:server:saveRolePermissions',
-    'cipher-admin:server:assignRole',
-    'cipher-admin:server:removeRole',
-    'cipher-admin:server:getStaff',
-    'cipher-admin:server:searchCharacter',
-    'cipher-admin:server:getCharacter',
-    'cipher-admin:server:addNote',
-    'cipher-admin:server:announce',
-    'cipher-admin:server:setWeather',
-    'cipher-admin:server:setTime',
-    'cipher-admin:server:banPlayer',
-    'cipher-admin:server:unban',
-    'cipher-admin:server:getBans',
-    'cipher-admin:server:warnPlayer',
-    'cipher-admin:server:getWarnings',
-    'cipher-admin:server:deleteWarning',
-    'cipher-admin:server:getInventory',
-    'cipher-admin:server:giveItem',
-    'cipher-admin:server:removeItem',
-    'cipher-admin:server:clearInventory',
-    'cipher-admin:server:getItemList',
-    'cipher-admin:server:getWeaponList',
-    'cipher-admin:server:getVehicleList',
-    'cipher-admin:server:deleteCharacter',
-    'cipher-admin:server:getResources',
-    'cipher-admin:server:restartResource',
-    'cipher-admin:server:getReports',
-    'cipher-admin:server:claimReport',
-    'cipher-admin:server:respondReport',
-    'cipher-admin:server:closeReport',
-    'cipher-admin:server:massAnnounce',
-    'cipher-admin:server:summonAll',
-    'cipher-admin:server:getStats',
-    'cipher-admin:server:getAdminInventory',
-    'cipher-admin:server:transferItem',
-    'cipher-admin:server:setAdminDuty',
-    'cipher-admin:server:getDutyAdmins',
-    'cipher-admin:server:getThreats',
-    'cipher-admin:server:resolveThreat',
-    'cipher-admin:server:getLinkedAccounts',
-    'cipher-admin:server:getEvasionHits',
-    'cipher-admin:server:massAction',
-    'cipher-admin:server:getPlayerIdentifiers',
-    'cipher-admin:server:mutePlayer',
-    'cipher-admin:server:getLiveMap',
-    'cipher-admin:server:getBanHistory',
+    'XS-AdminMenu:server:open',
+    'XS-AdminMenu:server:getPlayers',
+    'XS-AdminMenu:server:getAudit',
+    'XS-AdminMenu:server:getRoles',
+    'XS-AdminMenu:server:saveRolePermissions',
+    'XS-AdminMenu:server:assignRole',
+    'XS-AdminMenu:server:removeRole',
+    'XS-AdminMenu:server:getStaff',
+    'XS-AdminMenu:server:searchCharacter',
+    'XS-AdminMenu:server:getCharacter',
+    'XS-AdminMenu:server:addNote',
+    'XS-AdminMenu:server:announce',
+    'XS-AdminMenu:server:setWeather',
+    'XS-AdminMenu:server:setTime',
+    'XS-AdminMenu:server:banPlayer',
+    'XS-AdminMenu:server:unban',
+    'XS-AdminMenu:server:getBans',
+    'XS-AdminMenu:server:warnPlayer',
+    'XS-AdminMenu:server:getWarnings',
+    'XS-AdminMenu:server:deleteWarning',
+    'XS-AdminMenu:server:getInventory',
+    'XS-AdminMenu:server:giveItem',
+    'XS-AdminMenu:server:removeItem',
+    'XS-AdminMenu:server:clearInventory',
+    'XS-AdminMenu:server:getItemList',
+    'XS-AdminMenu:server:getWeaponList',
+    'XS-AdminMenu:server:getVehicleList',
+    'XS-AdminMenu:server:deleteCharacter',
+    'XS-AdminMenu:server:getResources',
+    'XS-AdminMenu:server:restartResource',
+    'XS-AdminMenu:server:getReports',
+    'XS-AdminMenu:server:claimReport',
+    'XS-AdminMenu:server:respondReport',
+    'XS-AdminMenu:server:closeReport',
+    'XS-AdminMenu:server:massAnnounce',
+    'XS-AdminMenu:server:summonAll',
+    'XS-AdminMenu:server:getStats',
+    'XS-AdminMenu:server:getAdminInventory',
+    'XS-AdminMenu:server:transferItem',
+    'XS-AdminMenu:server:setAdminDuty',
+    'XS-AdminMenu:server:getDutyAdmins',
+    'XS-AdminMenu:server:getThreats',
+    'XS-AdminMenu:server:resolveThreat',
+    'XS-AdminMenu:server:getLinkedAccounts',
+    'XS-AdminMenu:server:getEvasionHits',
+    'XS-AdminMenu:server:massAction',
+    'XS-AdminMenu:server:getPlayerIdentifiers',
+    'XS-AdminMenu:server:mutePlayer',
+    'XS-AdminMenu:server:getLiveMap',
+    'XS-AdminMenu:server:getBanHistory',
 }
 
 for _, endpoint in ipairs(PROXY_ENDPOINTS) do
@@ -195,7 +195,7 @@ RegisterNUICallback('playerAction', function(data, cb)
 
         if targetSrc and targetSrc ~= GetPlayerServerId(PlayerId()) then
             -- Spawning for another player — use server relay
-            TriggerServerEvent('cipher-admin:server:playerAction', data)
+            TriggerServerEvent('XS-AdminMenu:server:playerAction', data)
         else
             -- Spawning for self — do it locally
             CreateThread(function()
@@ -212,41 +212,41 @@ RegisterNUICallback('playerAction', function(data, cb)
                 SetModelAsNoLongerNeeded(hash)
                 TaskWarpPedIntoVehicle(ped, veh, -1)
                 local plate = GetVehicleNumberPlateText(veh)
-                TriggerServerEvent('cipher-admin:server:giveVehicleKeys', plate, model)
+                TriggerServerEvent('XS-AdminMenu:server:giveVehicleKeys', plate, model)
                 Notify({ title = 'Vehicle Spawned', description = model, type = 'success' })
             end)
         end
         cb('ok')
         return
     end
-    TriggerServerEvent('cipher-admin:server:playerAction', data)
+    TriggerServerEvent('XS-AdminMenu:server:playerAction', data)
     cb('ok')
 end)
 
 -- ── GPS / Goto ────────────────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:teleport')
-AddEventHandler('cipher-admin:client:teleport', function(coords)
+RegisterNetEvent('XS-AdminMenu:client:teleport')
+AddEventHandler('XS-AdminMenu:client:teleport', function(coords)
     local ped = PlayerPedId()
     SetEntityCoords(ped, coords.x, coords.y, coords.z, false, false, false, false)
 end)
 
 -- ── Bring ─────────────────────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:bringMe')
-AddEventHandler('cipher-admin:client:bringMe', function()
+RegisterNetEvent('XS-AdminMenu:client:bringMe')
+AddEventHandler('XS-AdminMenu:client:bringMe', function()
     local ped    = PlayerPedId()
     local coords = GetEntityCoords(ped)
-    TriggerServerEvent('cipher-admin:server:receiveBringCoords', coords)
+    TriggerServerEvent('XS-AdminMenu:server:receiveBringCoords', coords)
 end)
 
-RegisterNetEvent('cipher-admin:client:bringTarget')
-AddEventHandler('cipher-admin:client:bringTarget', function(coords)
+RegisterNetEvent('XS-AdminMenu:client:bringTarget')
+AddEventHandler('XS-AdminMenu:client:bringTarget', function(coords)
     local ped = PlayerPedId()
     SetEntityCoords(ped, coords.x, coords.y, coords.z + 1.0, false, false, false, false)
 end)
 
 -- ── Spectate ──────────────────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:spectate')
-AddEventHandler('cipher-admin:client:spectate', function(targetNetId)
+RegisterNetEvent('XS-AdminMenu:client:spectate')
+AddEventHandler('XS-AdminMenu:client:spectate', function(targetNetId)
     if spectating then
         NetworkSetInSpectatorMode(false, PlayerPedId())
         spectating     = false
@@ -372,8 +372,8 @@ local function StartNoclipThread()
 end
 
 -- ── Noclip ────────────────────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:toggleNoclip')
-AddEventHandler('cipher-admin:client:toggleNoclip', function()
+RegisterNetEvent('XS-AdminMenu:client:toggleNoclip')
+AddEventHandler('XS-AdminMenu:client:toggleNoclip', function()
     noclipOn = not noclipOn
     local ped   = PlayerPedId()
     local netId = PedToNet(ped)
@@ -381,20 +381,20 @@ AddEventHandler('cipher-admin:client:toggleNoclip', function()
     if noclipOn then
         SetEntityCollision(ped, false, false)
         SetEntityAlpha(ped, 0, false)
-        TriggerServerEvent('cipher-admin:server:noclipSync', netId, true)
+        TriggerServerEvent('XS-AdminMenu:server:noclipSync', netId, true)
         Notify({ title = 'Noclip ON', description = 'WASD / Space / Ctrl · Shift=fast', type = 'inform' })
         StartNoclipThread()
     else
         SetEntityCollision(ped, true, true)
         ResetEntityAlpha(ped)
-        TriggerServerEvent('cipher-admin:server:noclipSync', netId, false)
+        TriggerServerEvent('XS-AdminMenu:server:noclipSync', netId, false)
         Notify({ title = 'Noclip OFF', type = 'inform' })
     end
 end)
 
 -- ── Invisible ─────────────────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:toggleInvisible')
-AddEventHandler('cipher-admin:client:toggleInvisible', function()
+RegisterNetEvent('XS-AdminMenu:client:toggleInvisible')
+AddEventHandler('XS-AdminMenu:client:toggleInvisible', function()
     invisOn = not invisOn
     local ped = PlayerPedId()
     if invisOn then
@@ -406,14 +406,14 @@ AddEventHandler('cipher-admin:client:toggleInvisible', function()
 end)
 
 -- ── Freeze (self when targeting) ──────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:freeze')
-AddEventHandler('cipher-admin:client:freeze', function(state)
+RegisterNetEvent('XS-AdminMenu:client:freeze')
+AddEventHandler('XS-AdminMenu:client:freeze', function(state)
     FreezeEntityPosition(PlayerPedId(), state)
 end)
 
 -- ── Weather ───────────────────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:setWeather')
-AddEventHandler('cipher-admin:client:setWeather', function(weather)
+RegisterNetEvent('XS-AdminMenu:client:setWeather')
+AddEventHandler('XS-AdminMenu:client:setWeather', function(weather)
     SetWeatherTypePersist(weather)
     SetWeatherTypeNow(weather)
     SetWeatherTypeNowPersist(weather)
@@ -421,8 +421,8 @@ AddEventHandler('cipher-admin:client:setWeather', function(weather)
 end)
 
 -- ── Time ──────────────────────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:setTime')
-AddEventHandler('cipher-admin:client:setTime', function(hour, minute)
+RegisterNetEvent('XS-AdminMenu:client:setTime')
+AddEventHandler('XS-AdminMenu:client:setTime', function(hour, minute)
     -- SetClockTime is overwritten by any weathersync resource within a tick,
     -- which is why this looked like it did nothing while weather worked fine.
     -- NetworkOverrideClockTime is the one that holds — it is what the Freeze
@@ -432,8 +432,8 @@ AddEventHandler('cipher-admin:client:setTime', function(hour, minute)
 end)
 
 -- ── Announcement ──────────────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:announcement')
-AddEventHandler('cipher-admin:client:announcement', function(data)
+RegisterNetEvent('XS-AdminMenu:client:announcement')
+AddEventHandler('XS-AdminMenu:client:announcement', function(data)
     SendNUIMessage({ type = 'announcement', data = data })
     Notify({
         title       = data.adminName or 'Server',
@@ -444,42 +444,42 @@ AddEventHandler('cipher-admin:client:announcement', function(data)
 end)
 
 -- ── Get coords then relay to admin ───────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:getCoordsThen')
-AddEventHandler('cipher-admin:client:getCoordsThen', function(adminSrc)
+RegisterNetEvent('XS-AdminMenu:client:getCoordsThen')
+AddEventHandler('XS-AdminMenu:client:getCoordsThen', function(adminSrc)
     local coords = GetEntityCoords(PlayerPedId())
-    TriggerServerEvent('cipher-admin:server:relayGotoCoords', adminSrc, { x = coords.x, y = coords.y, z = coords.z })
+    TriggerServerEvent('XS-AdminMenu:server:relayGotoCoords', adminSrc, { x = coords.x, y = coords.y, z = coords.z })
 end)
 
 -- ── Get spawn coords and relay ────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:getSpawnCoords')
-AddEventHandler('cipher-admin:client:getSpawnCoords', function(model, adminSrc)
+RegisterNetEvent('XS-AdminMenu:client:getSpawnCoords')
+AddEventHandler('XS-AdminMenu:client:getSpawnCoords', function(model, adminSrc)
     local ped    = PlayerPedId()
     local coords = GetEntityCoords(ped)
     local heading = GetEntityHeading(ped)
-    TriggerServerEvent('cipher-admin:server:spawnVehCoords', adminSrc, model, { x = coords.x + 3.0, y = coords.y, z = coords.z, w = heading })
+    TriggerServerEvent('XS-AdminMenu:server:spawnVehCoords', adminSrc, model, { x = coords.x + 3.0, y = coords.y, z = coords.z, w = heading })
 end)
 
 -- ── Revive / Heal ─────────────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:revive')
-AddEventHandler('cipher-admin:client:revive', function()
+RegisterNetEvent('XS-AdminMenu:client:revive')
+AddEventHandler('XS-AdminMenu:client:revive', function()
     ReviveSelf()
 end)
 
-RegisterNetEvent('cipher-admin:client:killPlayer')
-AddEventHandler('cipher-admin:client:killPlayer', function()
+RegisterNetEvent('XS-AdminMenu:client:killPlayer')
+AddEventHandler('XS-AdminMenu:client:killPlayer', function()
     SetEntityHealth(PlayerPedId(), 0)
 end)
 
-RegisterNetEvent('cipher-admin:client:setHealth')
-AddEventHandler('cipher-admin:client:setHealth', function(hp, armour)
+RegisterNetEvent('XS-AdminMenu:client:setHealth')
+AddEventHandler('XS-AdminMenu:client:setHealth', function(hp, armour)
     local ped = PlayerPedId()
     -- Health 0 would kill rather than set, which is what Kill is for.
     SetEntityHealth(ped, math.max(1, math.floor(tonumber(hp) or 200)))
     SetPedArmour(ped, math.max(0, math.floor(tonumber(armour) or 0)))
 end)
 
-RegisterNetEvent('cipher-admin:client:eject')
-AddEventHandler('cipher-admin:client:eject', function(deleteVeh)
+RegisterNetEvent('XS-AdminMenu:client:eject')
+AddEventHandler('XS-AdminMenu:client:eject', function(deleteVeh)
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
     if not veh or veh == 0 then return end
@@ -499,8 +499,8 @@ AddEventHandler('cipher-admin:client:eject', function(deleteVeh)
     Notify({ title = 'Removed from vehicle', type = 'inform' })
 end)
 
-RegisterNetEvent('cipher-admin:client:mutedNotice')
-AddEventHandler('cipher-admin:client:mutedNotice', function(data)
+RegisterNetEvent('XS-AdminMenu:client:mutedNotice')
+AddEventHandler('XS-AdminMenu:client:mutedNotice', function(data)
     if data and data.unmuted then
         Notify({ title = 'Unmuted', description = 'You can use chat again.', type = 'success' })
         return
@@ -521,8 +521,8 @@ AddEventHandler('cipher-admin:client:mutedNotice', function(data)
     })
 end)
 
-RegisterNetEvent('cipher-admin:client:heal')
-AddEventHandler('cipher-admin:client:heal', function()
+RegisterNetEvent('XS-AdminMenu:client:heal')
+AddEventHandler('XS-AdminMenu:client:heal', function()
     local ped = PlayerPedId()
     SetEntityHealth(ped, Tune('MaxHealth', 200))
     SetPedArmour(ped, Tune('ArmourAmount', 100))
@@ -530,14 +530,14 @@ AddEventHandler('cipher-admin:client:heal', function()
 end)
 
 -- ── Strip Weapons ─────────────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:stripWeapons')
-AddEventHandler('cipher-admin:client:stripWeapons', function()
+RegisterNetEvent('XS-AdminMenu:client:stripWeapons')
+AddEventHandler('XS-AdminMenu:client:stripWeapons', function()
     RemoveAllPedWeapons(PlayerPedId(), true)
 end)
 
 -- ── Delete nearest vehicle ────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:deleteNearestVeh')
-AddEventHandler('cipher-admin:client:deleteNearestVeh', function()
+RegisterNetEvent('XS-AdminMenu:client:deleteNearestVeh')
+AddEventHandler('XS-AdminMenu:client:deleteNearestVeh', function()
     local ped  = PlayerPedId()
     local pos  = GetEntityCoords(ped)
     local veh  = GetClosestVehicle(pos.x, pos.y, pos.z, 5.0, 0, 71)
@@ -632,7 +632,7 @@ function ReviveSelf()
         if Config.CustomReviveEvent and Config.CustomReviveEvent ~= '' then
             TriggerEvent(Config.CustomReviveEvent)
         else
-            print('^3[cipher-admin]^0 Config.AmbulanceResource is "custom" but CustomReviveEvent is empty.')
+            print('^3[XS-AdminMenu]^0 Config.AmbulanceResource is "custom" but CustomReviveEvent is empty.')
         end
     end
 
@@ -673,7 +673,7 @@ function GiveKeysToVehicle(veh)
 
     -- Server-side resources: the server has to make the call.
     if res == 'qbx_vehiclekeys' or res == 'mk_vehiclekeys' or res == 'custom' then
-        TriggerServerEvent('cipher-admin:server:giveVehicleKeys', netId, plate)
+        TriggerServerEvent('XS-AdminMenu:server:giveVehicleKeys', netId, plate)
         return true
     end
 
@@ -690,7 +690,7 @@ function GiveKeysToVehicle(veh)
     end)
 
     if not ok then
-        print(('^3[cipher-admin]^0 keys via "%s" failed: %s'):format(tostring(res), tostring(err)))
+        print(('^3[XS-AdminMenu]^0 keys via "%s" failed: %s'):format(tostring(res), tostring(err)))
         return false
     end
 
@@ -959,7 +959,7 @@ RegisterNUICallback('selfAction', function(data, cb)
         Notify({ title = 'Revived', type = 'success' })
 
     elseif action == 'foodwater' then
-        TriggerServerEvent('cipher-admin:server:selfFoodWater')
+        TriggerServerEvent('XS-AdminMenu:server:selfFoodWater')
         Notify({ title = 'Food & Water', description = 'Hunger & thirst maxed', type = 'success' })
 
     -- Appearance
@@ -1222,7 +1222,7 @@ RegisterNUICallback('selfAction', function(data, cb)
                     NetworkGetEntityIsNetworked(ent) and NetworkGetNetworkIdFromEntity(ent) or 'local', c.x, c.y, c.z),
                 type = 'inform', duration = 12000,
             })
-            print(('^3[cipher-admin]^0 %s model=%d coords=%.4f,%.4f,%.4f'):format(kind, model, c.x, c.y, c.z))
+            print(('^3[XS-AdminMenu]^0 %s model=%d coords=%.4f,%.4f,%.4f'):format(kind, model, c.x, c.y, c.z))
         end
 
     -- Movement
@@ -1232,14 +1232,14 @@ RegisterNUICallback('selfAction', function(data, cb)
         if noclipOn then
             SetEntityCollision(ped, false, false)
             SetEntityAlpha(ped, 0, false)
-            TriggerServerEvent('cipher-admin:server:setPlayerAlpha', 0)
+            TriggerServerEvent('XS-AdminMenu:server:setPlayerAlpha', 0)
             Notify({ title = 'Noclip ON', description = 'WASD / Space / Ctrl · Shift=fast · Invisible to others', type = 'inform' })
             StartNoclipThread()
         else
             SetEntityCollision(ped, true, true)
             if not invisOn then
                 ResetEntityAlpha(ped)
-                TriggerServerEvent('cipher-admin:server:setPlayerAlpha', 255)
+                TriggerServerEvent('XS-AdminMenu:server:setPlayerAlpha', 255)
             end
             Notify({ title = 'Noclip OFF', type = 'inform' })
         end
@@ -1313,7 +1313,7 @@ RegisterNUICallback('selfAction', function(data, cb)
         if veh and veh ~= 0 and DoesEntityExist(veh) then
             local plate = GetVehicleNumberPlateText(veh)
             local model = GetEntityModel(veh)
-            TriggerServerEvent('cipher-admin:server:selfSetVehicleOwner', plate, model)
+            TriggerServerEvent('XS-AdminMenu:server:selfSetVehicleOwner', plate, model)
             GiveKeysToVehicle(veh)
         else
             Notify({ title = 'No vehicle nearby', type = 'error' })
@@ -1620,16 +1620,16 @@ RegisterNUICallback('ca_deleteEntityByNet', function(data, cb)
 end)
 
 -- ── Give weapon (received from server) ───────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:giveWeapon')
-AddEventHandler('cipher-admin:client:giveWeapon', function(weaponName, ammo)
+RegisterNetEvent('XS-AdminMenu:client:giveWeapon')
+AddEventHandler('XS-AdminMenu:client:giveWeapon', function(weaponName, ammo)
     local hash = GetHashKey(weaponName)
     GiveWeaponToPed(PlayerPedId(), hash, ammo, false, true)
     Notify({ title = 'Weapon Received', description = weaponName .. ' x' .. ammo, type = 'success' })
 end)
 
 -- ── Noclip visibility sync (received by other clients) ───────────────────────
-RegisterNetEvent('cipher-admin:client:noclipAlpha')
-AddEventHandler('cipher-admin:client:noclipAlpha', function(netId, visible)
+RegisterNetEvent('XS-AdminMenu:client:noclipAlpha')
+AddEventHandler('XS-AdminMenu:client:noclipAlpha', function(netId, visible)
     CreateThread(function()
         Wait(200) -- brief wait for ped to exist
         local ped = NetToPed(netId)
@@ -1640,12 +1640,12 @@ end)
 
 -- ── Admin Chat ───────────────────────────────────────────────────────────────
 RegisterNUICallback('adminChat', function(data, cb)
-    TriggerServerEvent('cipher-admin:server:adminChat', data.message or '')
+    TriggerServerEvent('XS-AdminMenu:server:adminChat', data.message or '')
     cb('ok')
 end)
 
-RegisterNetEvent('cipher-admin:client:adminChat')
-AddEventHandler('cipher-admin:client:adminChat', function(data)
+RegisterNetEvent('XS-AdminMenu:client:adminChat')
+AddEventHandler('XS-AdminMenu:client:adminChat', function(data)
     SendNUIMessage({ type = 'adminChat', data = data })
     if not isOpen then
         Notify({ title = '[ADMIN] ' .. (data.sender or '?'), description = data.message, type = 'inform', duration = 5000 })
@@ -1653,16 +1653,16 @@ AddEventHandler('cipher-admin:client:adminChat', function(data)
 end)
 
 -- ── Slap ─────────────────────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:slap')
-AddEventHandler('cipher-admin:client:slap', function()
+RegisterNetEvent('XS-AdminMenu:client:slap')
+AddEventHandler('XS-AdminMenu:client:slap', function()
     local ped = PlayerPedId()
     SetEntityVelocity(ped, math.random(-8, 8) * 1.0, math.random(-8, 8) * 1.0, 18.0)
     Notify({ title = 'Slapped!', description = 'An admin used the hand of justice.', type = 'error', duration = 3000 })
 end)
 
 -- ── Reset position ────────────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:resetPosition')
-AddEventHandler('cipher-admin:client:resetPosition', function()
+RegisterNetEvent('XS-AdminMenu:client:resetPosition')
+AddEventHandler('XS-AdminMenu:client:resetPosition', function()
     local ped = PlayerPedId()
     SetEntityCoords(ped, 194.9438, -934.1517, 30.6868, false, false, false, false)
     SetEntityHeading(ped, 336.8065)
@@ -1670,42 +1670,42 @@ AddEventHandler('cipher-admin:client:resetPosition', function()
 end)
 
 -- ── DM from admin ─────────────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:dm')
-AddEventHandler('cipher-admin:client:dm', function(adminName, message)
+RegisterNetEvent('XS-AdminMenu:client:dm')
+AddEventHandler('XS-AdminMenu:client:dm', function(adminName, message)
     Notify({ title = '[ADMIN DM] ' .. adminName, description = message, type = 'inform', duration = 10000 })
     SendNUIMessage({ type = 'dm', adminName = adminName, message = message })
 end)
 
 -- ── Screenshot result ─────────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:screenshotResult')
-AddEventHandler('cipher-admin:client:screenshotResult', function(url, targetName, err)
+RegisterNetEvent('XS-AdminMenu:client:screenshotResult')
+AddEventHandler('XS-AdminMenu:client:screenshotResult', function(url, targetName, err)
     SendNUIMessage({ type = 'screenshotResult', data = { url = url, playerName = targetName, err = err } })
 end)
 
 -- ── Remote alpha (noclip invisible to others) ─────────────────────────────────
-RegisterNetEvent('cipher-admin:client:setRemoteAlpha')
-AddEventHandler('cipher-admin:client:setRemoteAlpha', function(netId, alpha)
+RegisterNetEvent('XS-AdminMenu:client:setRemoteAlpha')
+AddEventHandler('XS-AdminMenu:client:setRemoteAlpha', function(netId, alpha)
     local ent = NetToEnt(netId)
     if not ent or ent == 0 then return end
     if alpha == 0 then SetEntityAlpha(ent, 0, false) else ResetEntityAlpha(ent) end
 end)
 
 -- ── Report response to player ─────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:reportResponse')
-AddEventHandler('cipher-admin:client:reportResponse', function(data)
+RegisterNetEvent('XS-AdminMenu:client:reportResponse')
+AddEventHandler('XS-AdminMenu:client:reportResponse', function(data)
     Notify({ title = '[ADMIN RESPONSE]', description = (data.admin or 'Admin') .. ': ' .. (data.response or ''), type = 'success', duration = 12000 })
 end)
 
 -- ── New report (notify admins) ────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:newReport')
-AddEventHandler('cipher-admin:client:newReport', function(data)
+RegisterNetEvent('XS-AdminMenu:client:newReport')
+AddEventHandler('XS-AdminMenu:client:newReport', function(data)
     Notify({ title = '[REPORT] ' .. (data.name or 'Player'), description = data.message or '', type = 'inform', duration = 8000 })
     SendNUIMessage({ type = 'newReport', data = data })
 end)
 
 -- ── Warning notification ──────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:receiveWarning')
-AddEventHandler('cipher-admin:client:receiveWarning', function(data)
+RegisterNetEvent('XS-AdminMenu:client:receiveWarning')
+AddEventHandler('XS-AdminMenu:client:receiveWarning', function(data)
     Notify({
         title       = 'Warning Received',
         description = 'Reason: ' .. (data.reason or 'N/A') .. '\nAdmin: ' .. (data.adminName or 'Admin'),
@@ -1715,8 +1715,8 @@ AddEventHandler('cipher-admin:client:receiveWarning', function(data)
 end)
 
 -- ── Spawn Vehicle (client receives and spawns) ────────────────────────────────
-RegisterNetEvent('cipher-admin:client:spawnVehicle')
-AddEventHandler('cipher-admin:client:spawnVehicle', function(model, coords)
+RegisterNetEvent('XS-AdminMenu:client:spawnVehicle')
+AddEventHandler('XS-AdminMenu:client:spawnVehicle', function(model, coords)
     local hash = GetHashKey(model)
     RequestModel(hash)
     local t = 0

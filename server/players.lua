@@ -1,18 +1,18 @@
--- Cipher-Admin Server — Player Actions
+-- XS-AdminMenu Server — Player Actions
 
-local IsAdmin        = function(src) return exports['cipher-admin']:IsAdmin(src) end
-local HasPermission  = function(src, p) return exports['cipher-admin']:HasPermission(src, p) end
-local GetAdminCache  = function(src) return exports['cipher-admin']:GetAdminCache(src) end
-local Audit          = function(...) exports['cipher-admin']:Audit(...) end
-local GetIdentifiers = function(src) return exports['cipher-admin']:GetIdentifiers(src) end
+local IsAdmin        = function(src) return exports['XS-AdminMenu']:IsAdmin(src) end
+local HasPermission  = function(src, p) return exports['XS-AdminMenu']:HasPermission(src, p) end
+local GetAdminCache  = function(src) return exports['XS-AdminMenu']:GetAdminCache(src) end
+local Audit          = function(...) exports['XS-AdminMenu']:Audit(...) end
+local GetIdentifiers = function(src) return exports['XS-AdminMenu']:GetIdentifiers(src) end
 
 local function GetTargetPlayer(targetSrc)
     return Framework.GetPlayer(tonumber(targetSrc))
 end
 
 -- ── Main action handler ───────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:server:playerAction')
-AddEventHandler('cipher-admin:server:playerAction', function(data)
+RegisterNetEvent('XS-AdminMenu:server:playerAction')
+AddEventHandler('XS-AdminMenu:server:playerAction', function(data)
     local src    = source
     if not IsAdmin(src) then return end
     local action = data.action
@@ -23,7 +23,7 @@ AddEventHandler('cipher-admin:server:playerAction', function(data)
 
     -- A bring is a 900m position jump and a revive is health from nothing, so
     -- the target is exempt briefly or the threat panel fills with staff work.
-    if tSrc then pcall(function() exports['cipher-admin']:AcExempt(tSrc) end) end
+    if tSrc then pcall(function() exports['XS-AdminMenu']:AcExempt(tSrc) end) end
 
     -- ── Kick ─────────────────────────────────────────────────────────────────
     if action == 'kick' then
@@ -35,13 +35,13 @@ AddEventHandler('cipher-admin:server:playerAction', function(data)
     -- ── Freeze ───────────────────────────────────────────────────────────────
     elseif action == 'freeze' then
         if not HasPermission(src, 'freeze') then return end
-        TriggerClientEvent('cipher-admin:client:freeze', tSrc, data.state)
+        TriggerClientEvent('XS-AdminMenu:client:freeze', tSrc, data.state)
         Audit(src, data.state and 'FREEZE' or 'UNFREEZE', tName, tCid, nil)
 
     -- ── Revive ────────────────────────────────────────────────────────────────
     elseif action == 'revive' then
         if not HasPermission(src, 'revive') then return end
-        TriggerClientEvent('cipher-admin:client:revive', tSrc)
+        TriggerClientEvent('XS-AdminMenu:client:revive', tSrc)
         Audit(src, 'REVIVE', tName, tCid, nil)
 
     -- ── Heal ──────────────────────────────────────────────────────────────────
@@ -51,20 +51,20 @@ AddEventHandler('cipher-admin:server:playerAction', function(data)
             tp.Functions.SetMetaData('hunger', 100)
             tp.Functions.SetMetaData('thirst', 100)
         end
-        TriggerClientEvent('cipher-admin:client:heal', tSrc)
+        TriggerClientEvent('XS-AdminMenu:client:heal', tSrc)
         Audit(src, 'HEAL', tName, tCid, nil)
 
     -- ── Goto ──────────────────────────────────────────────────────────────────
     elseif action == 'goto' then
         if not HasPermission(src, 'teleport') then return end
         -- Get target coords then teleport admin to them
-        TriggerClientEvent('cipher-admin:client:getCoordsThen', tSrc, src)
+        TriggerClientEvent('XS-AdminMenu:client:getCoordsThen', tSrc, src)
         Audit(src, 'GOTO', tName, tCid, nil)
 
     -- ── Bring ─────────────────────────────────────────────────────────────────
     elseif action == 'bring' then
         if not HasPermission(src, 'bring') then return end
-        TriggerClientEvent('cipher-admin:client:bringMe', src)
+        TriggerClientEvent('XS-AdminMenu:client:bringMe', src)
         -- bringMe asks admin client for coords → server → target teleports there
         Audit(src, 'BRING', tName, tCid, nil)
         -- Store pending bring target
@@ -74,18 +74,18 @@ AddEventHandler('cipher-admin:server:playerAction', function(data)
     elseif action == 'spectate' then
         if not HasPermission(src, 'spectate') then return end
         local netId = NetworkGetNetworkIdFromEntity(GetPlayerPed(tSrc))
-        TriggerClientEvent('cipher-admin:client:spectate', src, netId)
+        TriggerClientEvent('XS-AdminMenu:client:spectate', src, netId)
         Audit(src, 'SPECTATE', tName, tCid, nil)
 
     -- ── Noclip ────────────────────────────────────────────────────────────────
     elseif action == 'noclip' then
         if not HasPermission(src, 'noclip') then return end
-        TriggerClientEvent('cipher-admin:client:toggleNoclip', src)
+        TriggerClientEvent('XS-AdminMenu:client:toggleNoclip', src)
 
     -- ── Invisible ─────────────────────────────────────────────────────────────
     elseif action == 'invisible' then
         if not HasPermission(src, 'invisible') then return end
-        TriggerClientEvent('cipher-admin:client:toggleInvisible', src)
+        TriggerClientEvent('XS-AdminMenu:client:toggleInvisible', src)
 
     -- ── Set Job ───────────────────────────────────────────────────────────────
     elseif action == 'setjob' then
@@ -121,21 +121,21 @@ AddEventHandler('cipher-admin:server:playerAction', function(data)
     -- ── Strip Weapons ─────────────────────────────────────────────────────────
     elseif action == 'stripweapons' then
         if not HasPermission(src, 'clearinv') then return end
-        TriggerClientEvent('cipher-admin:client:stripWeapons', tSrc)
+        TriggerClientEvent('XS-AdminMenu:client:stripWeapons', tSrc)
         Audit(src, 'STRIP_WEAPONS', tName, tCid, nil)
 
     -- ── Slap ──────────────────────────────────────────────────────────────────
     elseif action == 'slap' then
         if not HasPermission(src, 'slap') then return end
         if not tSrc then return end
-        TriggerClientEvent('cipher-admin:client:slap', tSrc)
+        TriggerClientEvent('XS-AdminMenu:client:slap', tSrc)
         Audit(src, 'SLAP', tName, tCid, nil)
 
     -- ── Reset position ────────────────────────────────────────────────────────
     elseif action == 'resetpos' then
         if not HasPermission(src, 'resetpos') then return end
         if not tSrc then return end
-        TriggerClientEvent('cipher-admin:client:resetPosition', tSrc)
+        TriggerClientEvent('XS-AdminMenu:client:resetPosition', tSrc)
         Audit(src, 'RESET_POSITION', tName, tCid, nil)
 
     -- ── DM player ─────────────────────────────────────────────────────────────
@@ -144,7 +144,7 @@ AddEventHandler('cipher-admin:server:playerAction', function(data)
         if not tSrc then return end
         local a    = GetAdminCache(src)
         local from = a and a.name or GetPlayerName(src)
-        TriggerClientEvent('cipher-admin:client:dm', tSrc, from, data.message or '')
+        TriggerClientEvent('XS-AdminMenu:client:dm', tSrc, from, data.message or '')
         Audit(src, 'DM', tName, tCid, data.message)
 
     -- ── Screenshot ────────────────────────────────────────────────────────────
@@ -188,7 +188,7 @@ AddEventHandler('cipher-admin:server:playerAction', function(data)
                     TriggerClientEvent('ox_lib:notify', adminSrc, { title = 'Screenshot Failed', description = tostring(err or 'No URL returned'), type = 'error' })
                     return
                 end
-                TriggerClientEvent('cipher-admin:client:screenshotResult', adminSrc, url, playerName, err)
+                TriggerClientEvent('XS-AdminMenu:client:screenshotResult', adminSrc, url, playerName, err)
             end)
         end)
         if not ok then
@@ -211,27 +211,27 @@ AddEventHandler('cipher-admin:server:playerAction', function(data)
             end)
         end
         -- Also give natively for immediate in-hand effect
-        TriggerClientEvent('cipher-admin:client:giveWeapon', tSrc, weaponName, ammo)
+        TriggerClientEvent('XS-AdminMenu:client:giveWeapon', tSrc, weaponName, ammo)
         Audit(src, 'GIVE_WEAPON', tName, tCid, weaponName .. ' x' .. tostring(ammo))
 
     -- ── Delete nearest vehicle ────────────────────────────────────────────────
     elseif action == 'deletevehicle' then
         if not HasPermission(src, 'deleteveh') then return end
-        TriggerClientEvent('cipher-admin:client:deleteNearestVeh', tSrc or src)
+        TriggerClientEvent('XS-AdminMenu:client:deleteNearestVeh', tSrc or src)
         Audit(src, 'DELETE_VEHICLE', tName, tCid, nil)
 
     -- ── Spawn Vehicle ─────────────────────────────────────────────────────────
     elseif action == 'spawnveh' then
         if not HasPermission(src, 'spawnveh') then return end
         local spawnSrc = tSrc or src
-        TriggerClientEvent('cipher-admin:client:getSpawnCoords', spawnSrc, data.model, src)
+        TriggerClientEvent('XS-AdminMenu:client:getSpawnCoords', spawnSrc, data.model, src)
         Audit(src, 'SPAWN_VEHICLE', tName, tCid, data.model)
 
     -- ── Kill ──────────────────────────────────────────────────────────────────
     elseif action == 'kill' then
         if not HasPermission(src, 'killplayer') then return end
         if not tSrc then return end
-        TriggerClientEvent('cipher-admin:client:killPlayer', tSrc)
+        TriggerClientEvent('XS-AdminMenu:client:killPlayer', tSrc)
         Audit(src, 'KILL', tName, tCid, nil)
 
     -- ── Set health / armour ───────────────────────────────────────────────────
@@ -242,14 +242,14 @@ AddEventHandler('cipher-admin:server:playerAction', function(data)
         if not tSrc then return end
         local hp  = math.max(0, math.min(200, tonumber(data.health) or 200))
         local arm = math.max(0, math.min(100, tonumber(data.armour) or 0))
-        TriggerClientEvent('cipher-admin:client:setHealth', tSrc, hp, arm)
+        TriggerClientEvent('XS-AdminMenu:client:setHealth', tSrc, hp, arm)
         Audit(src, 'SET_HEALTH', tName, tCid, ('%d hp / %d armour'):format(hp, arm))
 
     -- ── Eject from vehicle ────────────────────────────────────────────────────
     elseif action == 'eject' then
         if not HasPermission(src, 'eject') then return end
         if not tSrc then return end
-        TriggerClientEvent('cipher-admin:client:eject', tSrc, data.delete == true)
+        TriggerClientEvent('XS-AdminMenu:client:eject', tSrc, data.delete == true)
         Audit(src, 'EJECT', tName, tCid, data.delete and 'and deleted vehicle' or nil)
 
     -- ── Send player to a position ─────────────────────────────────────────────
@@ -260,8 +260,8 @@ AddEventHandler('cipher-admin:server:playerAction', function(data)
         if not tSrc then return end
         local x, y, z = tonumber(data.x), tonumber(data.y), tonumber(data.z)
         if not x or not y or not z then return end
-        pcall(function() exports['cipher-admin']:AcExempt(tSrc) end)
-        TriggerClientEvent('cipher-admin:client:teleport', tSrc, { x = x, y = y, z = z })
+        pcall(function() exports['XS-AdminMenu']:AcExempt(tSrc) end)
+        TriggerClientEvent('XS-AdminMenu:client:teleport', tSrc, { x = x, y = y, z = z })
         Audit(src, 'SEND_TO', tName, tCid, ('%.0f, %.0f, %.0f'):format(x, y, z))
     end
 end)
@@ -270,7 +270,7 @@ end)
 -- Deliberately separate from the single-target handler: these iterate every
 -- player, and mixing them in would mean the per-target permission check above
 -- ran once against a target that does not exist.
-lib.callback.register('cipher-admin:server:massAction', function(src, data)
+lib.callback.register('XS-AdminMenu:server:massAction', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'massactions') then return false end
 
@@ -284,7 +284,7 @@ lib.callback.register('cipher-admin:server:massAction', function(src, data)
             -- Never freeze other staff: an admin who freezes the whole server
             -- and forgets has just locked out everyone who could unfreeze it.
             if pid ~= src and not GetAdminCache(pid) then
-                TriggerClientEvent('cipher-admin:client:freeze', pid, state)
+                TriggerClientEvent('XS-AdminMenu:client:freeze', pid, state)
                 count = count + 1
             end
         end
@@ -298,7 +298,7 @@ lib.callback.register('cipher-admin:server:massAction', function(src, data)
             if pid ~= src then
                 local ok, pos = pcall(function() return GetEntityCoords(GetPlayerPed(pid)) end)
                 if ok and pos and #(pos - origin) <= radius then
-                    TriggerClientEvent('cipher-admin:client:revive', pid)
+                    TriggerClientEvent('XS-AdminMenu:client:revive', pid)
                     count = count + 1
                 end
             end
@@ -315,7 +315,7 @@ end)
 -- ── Identifiers ───────────────────────────────────────────────────────────────
 -- Behind its own permission: these are the values a ban is built from, and the
 -- IP in particular is personal data that most staff have no reason to see.
-lib.callback.register('cipher-admin:server:getPlayerIdentifiers', function(src, data)
+lib.callback.register('XS-AdminMenu:server:getPlayerIdentifiers', function(src, data)
     if not IsAdmin(src) then return nil end
     if not HasPermission(src, 'viewids') then return nil end
 
@@ -334,42 +334,42 @@ lib.callback.register('cipher-admin:server:getPlayerIdentifiers', function(src, 
 end)
 
 -- ── Bring coord relay ─────────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:server:receiveBringCoords')
-AddEventHandler('cipher-admin:server:receiveBringCoords', function(coords)
+RegisterNetEvent('XS-AdminMenu:server:receiveBringCoords')
+AddEventHandler('XS-AdminMenu:server:receiveBringCoords', function(coords)
     local src      = source
     local targetSrc = _G['_bringTarget_'..src]
     if targetSrc then
-        TriggerClientEvent('cipher-admin:client:bringTarget', targetSrc, coords)
+        TriggerClientEvent('XS-AdminMenu:client:bringTarget', targetSrc, coords)
         _G['_bringTarget_'..src] = nil
     end
 end)
 
 -- ── Goto coord relay ─────────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:server:relayGotoCoords')
-AddEventHandler('cipher-admin:server:relayGotoCoords', function(adminSrc, coords)
-    TriggerClientEvent('cipher-admin:client:teleport', tonumber(adminSrc), coords)
+RegisterNetEvent('XS-AdminMenu:server:relayGotoCoords')
+AddEventHandler('XS-AdminMenu:server:relayGotoCoords', function(adminSrc, coords)
+    TriggerClientEvent('XS-AdminMenu:client:teleport', tonumber(adminSrc), coords)
 end)
 
 -- ── Get coords then relay ─────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:client:getCoordsThen')
+RegisterNetEvent('XS-AdminMenu:client:getCoordsThen')
 -- handled client-side; client fires relayGotoCoords back
 
 -- Client events received
-RegisterNetEvent('cipher-admin:client:revive')
-RegisterNetEvent('cipher-admin:client:heal')
-RegisterNetEvent('cipher-admin:client:stripWeapons')
-RegisterNetEvent('cipher-admin:client:deleteNearestVeh')
-RegisterNetEvent('cipher-admin:client:getSpawnCoords')
+RegisterNetEvent('XS-AdminMenu:client:revive')
+RegisterNetEvent('XS-AdminMenu:client:heal')
+RegisterNetEvent('XS-AdminMenu:client:stripWeapons')
+RegisterNetEvent('XS-AdminMenu:client:deleteNearestVeh')
+RegisterNetEvent('XS-AdminMenu:client:getSpawnCoords')
 
 -- ── Spawn vehicle coord relay ─────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:server:spawnVehCoords')
-AddEventHandler('cipher-admin:server:spawnVehCoords', function(adminSrc, model, coords)
-    TriggerClientEvent('cipher-admin:client:spawnVehicle', tonumber(adminSrc), model, coords)
+RegisterNetEvent('XS-AdminMenu:server:spawnVehCoords')
+AddEventHandler('XS-AdminMenu:server:spawnVehCoords', function(adminSrc, model, coords)
+    TriggerClientEvent('XS-AdminMenu:client:spawnVehicle', tonumber(adminSrc), model, coords)
 end)
 
 -- ── Give vehicle keys after admin spawn ──────────────────────────────────────
-RegisterNetEvent('cipher-admin:server:giveVehicleKeys')
-AddEventHandler('cipher-admin:server:giveVehicleKeys', function(plate, model)
+RegisterNetEvent('XS-AdminMenu:server:giveVehicleKeys')
+AddEventHandler('XS-AdminMenu:server:giveVehicleKeys', function(plate, model)
     local src = source
     if not IsAdmin(src) then return end
     local p   = Framework.GetPlayer(src)
@@ -392,35 +392,35 @@ AddEventHandler('cipher-admin:server:giveVehicleKeys', function(plate, model)
 end)
 
 -- ── Noclip visibility broadcast ───────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:server:noclipSync')
-AddEventHandler('cipher-admin:server:noclipSync', function(netId, visible)
+RegisterNetEvent('XS-AdminMenu:server:noclipSync')
+AddEventHandler('XS-AdminMenu:server:noclipSync', function(netId, visible)
     local src = source
     if not IsAdmin(src) then return end
     for _, psrc in ipairs(GetPlayers()) do
         local pid = tonumber(psrc)
         if pid ~= src then
-            TriggerClientEvent('cipher-admin:client:noclipAlpha', pid, netId, visible)
+            TriggerClientEvent('XS-AdminMenu:client:noclipAlpha', pid, netId, visible)
         end
     end
 end)
 
 -- ── Noclip alpha broadcast (invisible to others while noclipping) ────────────
-RegisterNetEvent('cipher-admin:server:setPlayerAlpha')
-AddEventHandler('cipher-admin:server:setPlayerAlpha', function(alpha)
+RegisterNetEvent('XS-AdminMenu:server:setPlayerAlpha')
+AddEventHandler('XS-AdminMenu:server:setPlayerAlpha', function(alpha)
     local src   = source
     if not IsAdmin(src) then return end
     local netId = NetworkGetNetworkIdFromEntity(GetPlayerPed(src))
     for _, psrc in ipairs(GetPlayers()) do
         local pid = tonumber(psrc)
         if pid ~= src then
-            TriggerClientEvent('cipher-admin:client:setRemoteAlpha', pid, netId, alpha)
+            TriggerClientEvent('XS-AdminMenu:client:setRemoteAlpha', pid, netId, alpha)
         end
     end
 end)
 
 -- ── Self: Food & Water ────────────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:server:selfFoodWater')
-AddEventHandler('cipher-admin:server:selfFoodWater', function()
+RegisterNetEvent('XS-AdminMenu:server:selfFoodWater')
+AddEventHandler('XS-AdminMenu:server:selfFoodWater', function()
     local src = source
     if not IsAdmin(src) then return end
     local p   = Framework.GetPlayer(src)
@@ -431,8 +431,8 @@ AddEventHandler('cipher-admin:server:selfFoodWater', function()
 end)
 
 -- ── Self: Register vehicle ownership ─────────────────────────────────────────
-RegisterNetEvent('cipher-admin:server:selfSetVehicleOwner')
-AddEventHandler('cipher-admin:server:selfSetVehicleOwner', function(plate, modelHash)
+RegisterNetEvent('XS-AdminMenu:server:selfSetVehicleOwner')
+AddEventHandler('XS-AdminMenu:server:selfSetVehicleOwner', function(plate, modelHash)
     local src = source
     if not IsAdmin(src) then return end
     local p   = Framework.GetPlayer(src)

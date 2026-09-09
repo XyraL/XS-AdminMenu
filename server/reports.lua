@@ -1,13 +1,13 @@
--- Cipher-Admin Server — Player Reports
+-- XS-AdminMenu Server — Player Reports
 
-local IsAdmin       = function(src) return exports['cipher-admin']:IsAdmin(src) end
-local HasPermission = function(src, p) return exports['cipher-admin']:HasPermission(src, p) end
-local GetAdminCache = function(src) return exports['cipher-admin']:GetAdminCache(src) end
-local Audit         = function(...) exports['cipher-admin']:Audit(...) end
+local IsAdmin       = function(src) return exports['XS-AdminMenu']:IsAdmin(src) end
+local HasPermission = function(src, p) return exports['XS-AdminMenu']:HasPermission(src, p) end
+local GetAdminCache = function(src) return exports['XS-AdminMenu']:GetAdminCache(src) end
+local Audit         = function(...) exports['XS-AdminMenu']:Audit(...) end
 
 -- ── Submit report (any player) ────────────────────────────────────────────────
-RegisterNetEvent('cipher-admin:server:submitReport')
-AddEventHandler('cipher-admin:server:submitReport', function(message, isReply)
+RegisterNetEvent('XS-AdminMenu:server:submitReport')
+AddEventHandler('XS-AdminMenu:server:submitReport', function(message, isReply)
     local src = source
     if not message or #message < 3 then
         TriggerClientEvent('ox_lib:notify', src, { title = 'Report', description = 'Message is too short.', type = 'error' })
@@ -37,7 +37,7 @@ AddEventHandler('cipher-admin:server:submitReport', function(message, isReply)
             for _, psrc in ipairs(GetPlayers()) do
                 local pid = tonumber(psrc)
                 if IsAdmin(pid) then
-                    TriggerClientEvent('cipher-admin:client:newReport', pid, { name = name, citizenid = cid, message = '[REPLY] ' .. message })
+                    TriggerClientEvent('XS-AdminMenu:client:newReport', pid, { name = name, citizenid = cid, message = '[REPLY] ' .. message })
                 end
             end
             return
@@ -50,14 +50,14 @@ AddEventHandler('cipher-admin:server:submitReport', function(message, isReply)
     for _, psrc in ipairs(GetPlayers()) do
         local pid = tonumber(psrc)
         if IsAdmin(pid) then
-            TriggerClientEvent('cipher-admin:client:newReport', pid, reportData)
+            TriggerClientEvent('XS-AdminMenu:client:newReport', pid, reportData)
         end
     end
     TriggerClientEvent('ox_lib:notify', src, { title = isReply and 'Reply Sent' or 'Report Submitted', description = 'An admin will respond shortly.', type = 'success' })
 end)
 
 -- ── Get reports list ──────────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:getReports', function(src, data)
+lib.callback.register('XS-AdminMenu:server:getReports', function(src, data)
     if not IsAdmin(src) then return nil end
     if not HasPermission(src, 'reports') then return nil end
     local status = (data and data.status) or 'open'
@@ -68,7 +68,7 @@ lib.callback.register('cipher-admin:server:getReports', function(src, data)
 end)
 
 -- ── Claim report ──────────────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:claimReport', function(src, data)
+lib.callback.register('XS-AdminMenu:server:claimReport', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'reports') then return false end
     local a    = GetAdminCache(src)
@@ -78,7 +78,7 @@ lib.callback.register('cipher-admin:server:claimReport', function(src, data)
 end)
 
 -- ── Respond to report ─────────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:respondReport', function(src, data)
+lib.callback.register('XS-AdminMenu:server:respondReport', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'reports') then return false end
     local a    = GetAdminCache(src)
@@ -91,7 +91,7 @@ lib.callback.register('cipher-admin:server:respondReport', function(src, data)
         local pid = tonumber(psrc)
         local pp  = Framework.GetPlayer(pid)
         if pp and pp.PlayerData.citizenid == data.citizenid then
-            TriggerClientEvent('cipher-admin:client:reportResponse', pid, { admin = from, response = data.response })
+            TriggerClientEvent('XS-AdminMenu:client:reportResponse', pid, { admin = from, response = data.response })
             break
         end
     end
@@ -100,7 +100,7 @@ lib.callback.register('cipher-admin:server:respondReport', function(src, data)
 end)
 
 -- ── Close report ──────────────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:closeReport', function(src, data)
+lib.callback.register('XS-AdminMenu:server:closeReport', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'reports') then return false end
     MySQL.update.await('UPDATE admin_reports SET status=? WHERE id=?', { 'closed', data.id })

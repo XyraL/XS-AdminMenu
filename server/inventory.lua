@@ -1,9 +1,9 @@
--- Cipher-Admin Server — Inventory Viewer / Editor
+-- XS-AdminMenu Server — Inventory Viewer / Editor
 
-local IsAdmin       = function(src) return exports['cipher-admin']:IsAdmin(src) end
-local HasPermission = function(src, p) return exports['cipher-admin']:HasPermission(src, p) end
-local GetAdminCache = function(src) return exports['cipher-admin']:GetAdminCache(src) end
-local Audit         = function(...) exports['cipher-admin']:Audit(...) end
+local IsAdmin       = function(src) return exports['XS-AdminMenu']:IsAdmin(src) end
+local HasPermission = function(src, p) return exports['XS-AdminMenu']:HasPermission(src, p) end
+local GetAdminCache = function(src) return exports['XS-AdminMenu']:GetAdminCache(src) end
+local Audit         = function(...) exports['XS-AdminMenu']:Audit(...) end
 
 -- Resolve the ox_inventory key from request data.
 -- Returns a player source (number) for online players or citizenid (string) for offline.
@@ -91,7 +91,7 @@ local function GetOxItems(invKey)
 end
 
 -- ── Get inventory ─────────────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:getInventory', function(src, data)
+lib.callback.register('XS-AdminMenu:server:getInventory', function(src, data)
     if not IsAdmin(src) then return nil end
     if not HasPermission(src, 'viewinv') then return nil end
 
@@ -132,7 +132,7 @@ lib.callback.register('cipher-admin:server:getInventory', function(src, data)
 end)
 
 -- ── Get admin's own inventory (for comparison pane) ───────────────────────────
-lib.callback.register('cipher-admin:server:getAdminInventory', function(src)
+lib.callback.register('XS-AdminMenu:server:getAdminInventory', function(src)
     if not IsAdmin(src) then return nil end
     if Config.InventoryResource ~= 'ox_inventory' then return nil end
     local items, inv = GetOxItems(tonumber(src))
@@ -141,7 +141,7 @@ lib.callback.register('cipher-admin:server:getAdminInventory', function(src)
 end)
 
 -- ── Give item ─────────────────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:giveItem', function(src, data)
+lib.callback.register('XS-AdminMenu:server:giveItem', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'giveitem') then return false end
 
@@ -164,7 +164,7 @@ lib.callback.register('cipher-admin:server:giveItem', function(src, data)
 end)
 
 -- ── Remove item ───────────────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:removeItem', function(src, data)
+lib.callback.register('XS-AdminMenu:server:removeItem', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'editinv') then return false end
 
@@ -189,7 +189,7 @@ lib.callback.register('cipher-admin:server:removeItem', function(src, data)
 end)
 
 -- ── Transfer item (between admin and target) ──────────────────────────────────
-lib.callback.register('cipher-admin:server:transferItem', function(src, data)
+lib.callback.register('XS-AdminMenu:server:transferItem', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'editinv') then return false end
     if Config.InventoryResource ~= 'ox_inventory' then return false end
@@ -219,7 +219,7 @@ lib.callback.register('cipher-admin:server:transferItem', function(src, data)
 end)
 
 -- ── Clear inventory ───────────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:clearInventory', function(src, data)
+lib.callback.register('XS-AdminMenu:server:clearInventory', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'clearinv') then return false end
 
@@ -249,7 +249,7 @@ end)
 -- hardcoded list is wrong on every server that added one.
 local _itemCache, _weaponCache
 
-lib.callback.register('cipher-admin:server:getItemList', function(src)
+lib.callback.register('XS-AdminMenu:server:getItemList', function(src)
     if not IsAdmin(src) then return nil end
     if _itemCache then return _itemCache end
 
@@ -268,7 +268,7 @@ end)
 
 -- Weapons for the Give Weapon picker. On an ox_inventory server these are just
 -- the items prefixed weapon_; on QBCore they come off Shared.Weapons.
-lib.callback.register('cipher-admin:server:getWeaponList', function(src)
+lib.callback.register('XS-AdminMenu:server:getWeaponList', function(src)
     if not IsAdmin(src) then return nil end
     if not HasPermission(src, 'giveweapon') then return nil end
     if _weaponCache then return _weaponCache end

@@ -32,7 +32,7 @@ elseif GetResourceState('qb-core') == 'started' then
     Framework.core = exports['qb-core']:GetCoreObject()
 else
     -- Not a hard error: the panel should still open so an admin can read this.
-    print('^1[cipher-admin]^0 No supported framework found. Start qbx_core or qb-core BEFORE cipher-admin.')
+    print('^1[XS-AdminMenu]^0 No supported framework found. Start qbx_core or qb-core BEFORE XS-AdminMenu.')
 end
 
 -- Returns the framework player object for a server id, or nil if that source

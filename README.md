@@ -1,19 +1,19 @@
-<h1 align="center">Cipher Admin</h1>
+<h1 align="center">XS-AdminMenu</h1>
 
 <p align="center">An advanced admin suite for <strong>QBox</strong> and <strong>QBCore</strong> — player management, bans, reports, inventory tools and entity inspection.</p>
 
 <p align="center">
-  <a href="https://github.com/XyraL/cipher-admin/releases"><img src="https://img.shields.io/github/v/release/XyraL/cipher-admin?style=flat-square&color=ff5364&label=release" alt="Latest release"></a>
+  <a href="https://github.com/XyraL/XS-AdminMenu/releases"><img src="https://img.shields.io/github/v/release/XyraL/XS-AdminMenu?style=flat-square&color=ff5364&label=release" alt="Latest release"></a>
   <img src="https://img.shields.io/badge/framework-QBox%20%7C%20QBCore-55dcff?style=flat-square" alt="framework">
   <img src="https://img.shields.io/badge/price-free-30d158?style=flat-square" alt="price">
-  <a href="https://xyralscripts.dev/docs-cipher-admin"><img src="https://img.shields.io/badge/docs-xyralscripts.dev-a889ff?style=flat-square" alt="docs"></a>
+  <a href="https://xyralscripts.dev/docs-xs-adminmenu"><img src="https://img.shields.io/badge/docs-xyralscripts.dev-a889ff?style=flat-square" alt="docs"></a>
   <a href="https://discord.gg/XRURAw4TM2"><img src="https://img.shields.io/badge/support-discord-5865F2?style=flat-square" alt="support"></a>
 </p>
 
 <p align="center">
-  <a href="https://xyralscripts.dev/cipher-admin">Website</a> &nbsp;·&nbsp;
-  <a href="https://xyralscripts.dev/docs-cipher-admin">Setup guide</a> &nbsp;·&nbsp;
-  <a href="https://github.com/XyraL/cipher-admin/releases">Releases</a> &nbsp;·&nbsp;
+  <a href="https://xyralscripts.dev/xs-adminmenu">Website</a> &nbsp;·&nbsp;
+  <a href="https://xyralscripts.dev/docs-xs-adminmenu">Setup guide</a> &nbsp;·&nbsp;
+  <a href="https://github.com/XyraL/XS-AdminMenu/releases">Releases</a> &nbsp;·&nbsp;
   <a href="https://discord.gg/XRURAw4TM2">Discord</a>
 </p>
 
@@ -51,7 +51,7 @@
 
 3. **Add to `server.cfg`:**
    ```
-   ensure cipher-admin
+   ensure XS-AdminMenu
    ```
 
 4. **Set your owner identifier** in `config.lua`:
@@ -62,7 +62,7 @@
    ```
    Find your license with `print(GetPlayerIdentifierByType(source, 'license'))` in the server console.
 
-5. **Restart the server** (or `refresh` + `ensure cipher-admin`).
+5. **Restart the server** (or `refresh` + `ensure XS-AdminMenu`).
 
 ---
 
@@ -454,25 +454,25 @@ Free to use on any server you own or operate, including commercial ones.
 ## Documentation
 
 Full setup guide, requirements and troubleshooting:
-**[xyralscripts.dev/docs-cipher-admin](https://xyralscripts.dev/docs-cipher-admin)**
+**[xyralscripts.dev/docs-xs-adminmenu](https://xyralscripts.dev/docs-xs-adminmenu)**
 
 ## Support
 
-- **Found a bug?** [Open an issue](https://github.com/XyraL/cipher-admin/issues)
+- **Found a bug?** [Open an issue](https://github.com/XyraL/XS-AdminMenu/issues)
 - **Need setup help?** [Join the Discord](https://discord.gg/XRURAw4TM2) — check the setup guide first, it usually has the answer
 
-## The rest of the Cipher line
+## My other scripts
 
 All free, all source-available.
 
 | Script | What it is |
 |---|---|
-| **[Cipher](https://github.com/XyraL/cipher)** | modular criminal device for QBox and QBCore — gang ops, blackmarket and boosting in one encrypted tablet. |
-| **[Cipher MDT](https://github.com/XyraL/cipher-mdt)** | multi-department MDT for QBox — police, EMS and fire with live CAD, records, patient care and a live unit map. |
-| **[Cipher Drone](https://github.com/XyraL/cipher-drone)** | deployable police drone for QBox and QBCore — smooth flight, thermal, spotlight, tracker darts and real counterplay. |
-| **[Cipher Trucking](https://github.com/XyraL/cipher-trucking)** | civilian trucking job for QBox and QBCore — live route map, truck ownership, fuel and maintenance, and companies. |
-| **[Cipher MultiCharacter](https://github.com/XyraL/cipher-multicharacter)** | cinematic character selection for QBox and QBCore — identity dossiers, saved appearances, spawn cameras and configurable slots. |
-| **[Cipher Dispatch](https://github.com/XyraL/cipher-dispatch)** | multi-department live dispatch for QBox and QBCore — responder tracking, priority calls, TAC radio and provider integrations. |
+| **[XS-CriminalTablet](https://github.com/XyraL/XS-CriminalTablet)** | modular criminal device for QBox and QBCore — gang ops, blackmarket and boosting in one encrypted tablet. |
+| **[XS-MDT](https://github.com/XyraL/XS-MDT)** | multi-department MDT for QBox — police, EMS and fire with live CAD, records, patient care and a live unit map. |
+| **[XS-Drone](https://github.com/XyraL/XS-Drone)** | deployable police drone for QBox and QBCore — smooth flight, thermal, spotlight, tracker darts and real counterplay. |
+| **[XS-Trucking](https://github.com/XyraL/XS-Trucking)** | civilian trucking job for QBox and QBCore — live route map, truck ownership, fuel and maintenance, and companies. |
+| **[XS-MultiCharacter](https://github.com/XyraL/XS-MultiCharacter)** | cinematic character selection for QBox and QBCore — identity dossiers, saved appearances, spawn cameras and configurable slots. |
+| **[XS-Dispatch](https://github.com/XyraL/XS-Dispatch)** | multi-department live dispatch for QBox and QBCore — responder tracking, priority calls, TAC radio and provider integrations. |
 
 ## License
 

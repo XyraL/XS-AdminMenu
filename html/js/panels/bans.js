@@ -1,4 +1,4 @@
-// Cipher-Admin — Ban Manager Panel
+// XS-AdminMenu — Ban Manager Panel
 
 let _banFilter = 'active';
 
@@ -35,7 +35,7 @@ async function loadBans() {
 }
 
 async function fetchBans(search = '') {
-    const data = await caFetch('cipher-admin:server:getBans', {
+    const data = await caFetch('XS-AdminMenu:server:getBans', {
         search,
         expired: _banFilter === 'all',
     });
@@ -137,7 +137,7 @@ caAction('doUnban',    (d) => {
 });
 
 async function doUnban(banId, name) {
-    await caFetch('cipher-admin:server:unban', { banId, playerName: name });
+    await caFetch('XS-AdminMenu:server:unban', { banId, playerName: name });
     closeModal();
     loadBans();
 }

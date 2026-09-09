@@ -1,4 +1,4 @@
-// Cipher-Admin — Threat Detection Panel
+// XS-AdminMenu — Threat Detection Panel
 //
 // Two tabs: what the server noticed, and who it thinks is the same person.
 //
@@ -73,7 +73,7 @@ function loadThreats() {
 // ── Data ──────────────────────────────────────────────────────────────────────
 
 async function fetchThreats() {
-    const data = await caFetch('cipher-admin:server:getThreats', {
+    const data = await caFetch('XS-AdminMenu:server:getThreats', {
         detection: _threatFilters.detection,
         severity:  _threatFilters.severity,
         search:    _threatFilters.search,
@@ -99,7 +99,7 @@ async function fetchThreats() {
 }
 
 async function fetchEvasion() {
-    const rows = await caFetch('cipher-admin:server:getEvasionHits', {});
+    const rows = await caFetch('XS-AdminMenu:server:getEvasionHits', {});
     _lastEvasion = rows || [];
     if (_threatTab === 'evasion') renderEvasionList();
 }
@@ -276,7 +276,7 @@ async function openLinkedAccounts(citizenid, license, name) {
         '<div class="empty-state"><div class="empty-text">Looking up identifiers...</div></div>',
         '<button class="btn btn-ghost" onclick="closeModal()">Close</button>');
 
-    const data = await caFetch('cipher-admin:server:getLinkedAccounts', { citizenid, license });
+    const data = await caFetch('XS-AdminMenu:server:getLinkedAccounts', { citizenid, license });
 
     const body = document.querySelector('#ca-modal .modal-body');
     if (!body) return;
@@ -345,7 +345,7 @@ function setThreatTab(tab) {
 }
 
 async function resolveThreat(payload) {
-    await caFetch('cipher-admin:server:resolveThreat', payload);
+    await caFetch('XS-AdminMenu:server:resolveThreat', payload);
     fetchThreats();
 }
 

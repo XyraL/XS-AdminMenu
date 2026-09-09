@@ -1,7 +1,7 @@
 fx_version 'cerulean'
 game 'gta5'
 
-name        'Cipher-Admin'
+name        'XS-AdminMenu'
 description 'Advanced Admin Suite for QBox / QBCore'
 version     '2.0.1'
 author      'XyraL'

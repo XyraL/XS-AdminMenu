@@ -1,4 +1,4 @@
--- Cipher-Admin Server — Threat Detection
+-- XS-AdminMenu Server — Threat Detection
 --
 -- Detections come in two kinds, marked on each handler below.
 --
@@ -14,12 +14,12 @@
 -- Staff are exempt by default: noclip is a teleport, god mode is a health
 -- anomaly, and bring is a 900m jump on the person being brought.
 
-local IsAdmin       = function(src) return exports['cipher-admin']:IsAdmin(src) end
-local HasPermission = function(src, p) return exports['cipher-admin']:HasPermission(src, p) end
-local GetIds        = function(src) return exports['cipher-admin']:GetIdentifiers(src) end
+local IsAdmin       = function(src) return exports['XS-AdminMenu']:IsAdmin(src) end
+local HasPermission = function(src, p) return exports['XS-AdminMenu']:HasPermission(src, p) end
+local GetIds        = function(src) return exports['XS-AdminMenu']:GetIdentifiers(src) end
 
 -- Load marker for the boot self-check in server/main.lua.
-CipherAdminThreats = true
+XSAdminThreats = true
 
 local AC = Config.AntiCheat or { Enabled = false, Detections = {} }
 
@@ -135,7 +135,7 @@ end
 local function PushToAdmins(payload)
     if AC.NotifyAdmins == false then return end
     for _, asrc in ipairs(_adminSrcs) do
-        TriggerClientEvent('cipher-admin:client:threatFlag', asrc, payload)
+        TriggerClientEvent('XS-AdminMenu:client:threatFlag', asrc, payload)
     end
 end
 
@@ -171,7 +171,7 @@ local function ApplyAction(src, det, cfg, count, detail)
         local reason = ('Threat detection: %s (%s)'):format(LABELS[det] or det, detail or '')
         -- Same path as a staff ban: every identifier attached.
         local ok = pcall(function()
-            exports['cipher-admin']:SystemBan(src, reason, cfg.banDuration or 0)
+            exports['XS-AdminMenu']:SystemBan(src, reason, cfg.banDuration or 0)
         end)
         if not ok then
             DropPlayer(src, ('Kicked by threat detection: %s'):format(LABELS[det] or det))
@@ -344,9 +344,9 @@ CreateThread(function()
 
     _onesync = GetConvar('onesync', 'off') ~= 'off'
     if not _onesync then
-        print('^3[cipher-admin]^0 OneSync is off — server-side health/position/speed')
-        print('^3[cipher-admin]^0 detection is disabled. Event-based detection (explosions,')
-        print('^3[cipher-admin]^0 weapon damage, entity spawns) still runs.')
+        print('^3[XS-AdminMenu]^0 OneSync is off — server-side health/position/speed')
+        print('^3[XS-AdminMenu]^0 detection is disabled. Event-based detection (explosions,')
+        print('^3[XS-AdminMenu]^0 weapon damage, entity spawns) still runs.')
         return
     end
 
@@ -502,8 +502,8 @@ end)
 -- ── ADVISORY: client heartbeat ───────────────────────────────────────────────
 -- Values are spoofable. The reliable half is the absence of a report.
 
-RegisterNetEvent('cipher-admin:server:heartbeat')
-AddEventHandler('cipher-admin:server:heartbeat', function(data)
+RegisterNetEvent('XS-AdminMenu:server:heartbeat')
+AddEventHandler('XS-AdminMenu:server:heartbeat', function(data)
     local src = source
     if not AC.Enabled then return end
 
@@ -615,15 +615,15 @@ AddEventHandler('onResourceStart', function(res)
     if AC.Enabled then
         local n = 0
         for _ in pairs(AC.Detections or {}) do n = n + 1 end
-        print(('[Cipher-Admin] Threat detection active — %d detections configured.'):format(n))
+        print(('[XS-AdminMenu] Threat detection active — %d detections configured.'):format(n))
     else
-        print('[Cipher-Admin] Threat detection disabled in config.')
+        print('[XS-AdminMenu] Threat detection disabled in config.')
     end
 end)
 
 -- ── NUI callbacks ─────────────────────────────────────────────────────────────
 
-lib.callback.register('cipher-admin:server:getThreats', function(src, data)
+lib.callback.register('XS-AdminMenu:server:getThreats', function(src, data)
     if not IsAdmin(src) then return nil end
     if not HasPermission(src, 'viewthreats') then return nil end
 
@@ -684,19 +684,19 @@ lib.callback.register('cipher-admin:server:getThreats', function(src, data)
     }
 end)
 
-lib.callback.register('cipher-admin:server:resolveThreat', function(src, data)
+lib.callback.register('XS-AdminMenu:server:resolveThreat', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'managethreats') then return false end
 
-    local a = exports['cipher-admin']:GetAdminCache(src)
+    local a = exports['XS-AdminMenu']:GetAdminCache(src)
     local aName = a and a.name or 'Owner'
 
     if data.all then
         MySQL.update.await('UPDATE admin_flags SET handled = 1, handled_by = ? WHERE handled = 0', { aName })
-        exports['cipher-admin']:Audit(src, 'RESOLVE_THREATS', nil, nil, 'Marked all flags handled')
+        exports['XS-AdminMenu']:Audit(src, 'RESOLVE_THREATS', nil, nil, 'Marked all flags handled')
     elseif data.player and #data.player > 0 then
         MySQL.update.await('UPDATE admin_flags SET handled = 1, handled_by = ? WHERE handled = 0 AND player_name = ?', { aName, data.player })
-        exports['cipher-admin']:Audit(src, 'RESOLVE_THREATS', data.player, nil, 'Marked player flags handled')
+        exports['XS-AdminMenu']:Audit(src, 'RESOLVE_THREATS', data.player, nil, 'Marked player flags handled')
     elseif data.id then
         MySQL.update.await('UPDATE admin_flags SET handled = 1, handled_by = ? WHERE id = ?', { aName, data.id })
     else

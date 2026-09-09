@@ -1,4 +1,4 @@
--- Cipher-Admin Client — Player Report Commands
+-- XS-AdminMenu Client — Player Report Commands
 --
 -- Names come from Config.Commands so they can be renamed around a clash or
 -- disabled with ''. /r collides with a lot of radio and reply resources.
@@ -17,7 +17,7 @@ local function RegisterReportCommand(cfgKey, default, isReply)
             })
             return
         end
-        TriggerServerEvent('cipher-admin:server:submitReport', table.concat(args, ' '), isReply)
+        TriggerServerEvent('XS-AdminMenu:server:submitReport', table.concat(args, ' '), isReply)
     end, false)
 end
 
@@ -27,8 +27,8 @@ RegisterReportCommand('ReportShort', 'r',      false)
 RegisterReportCommand('Reply',       'reply',  true)
 
 -- Show admin response notification
-RegisterNetEvent('cipher-admin:client:reportResponse')
-AddEventHandler('cipher-admin:client:reportResponse', function(data)
+RegisterNetEvent('XS-AdminMenu:client:reportResponse')
+AddEventHandler('XS-AdminMenu:client:reportResponse', function(data)
     Notify({
         title       = 'Admin Response — ' .. (data.admin or 'Admin'),
         description = (data.response or '') .. '\n\nUse /reply to respond.',
@@ -38,4 +38,4 @@ AddEventHandler('cipher-admin:client:reportResponse', function(data)
 end)
 
 -- New report notification (for admins — handled in main.lua, but keep registered here too)
-RegisterNetEvent('cipher-admin:client:newReport')
+RegisterNetEvent('XS-AdminMenu:client:newReport')

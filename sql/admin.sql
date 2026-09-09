@@ -1,4 +1,4 @@
--- Cipher-Admin Database Schema
+-- XS-AdminMenu Database Schema
 -- Run once before starting the resource
 
 CREATE TABLE IF NOT EXISTS `admin_roles` (

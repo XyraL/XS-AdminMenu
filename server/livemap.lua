@@ -4,9 +4,9 @@
 -- natives — no client heartbeat, no events, nothing for a modder to spoof: the
 -- server reads every ped's real position itself, so what the map shows is what
 -- the server knows, not what clients claim.
-local IsAdmin = function(src) return exports['cipher-admin']:IsAdmin(src) end
+local IsAdmin = function(src) return exports['XS-AdminMenu']:IsAdmin(src) end
 
-lib.callback.register('cipher-admin:server:getLiveMap', function(src)
+lib.callback.register('XS-AdminMenu:server:getLiveMap', function(src)
     if not IsAdmin(src) then return nil end
 
     local out = {}
@@ -19,7 +19,7 @@ lib.callback.register('cipher-admin:server:getLiveMap', function(src)
             local veh = GetVehiclePedIsIn(ped, false)
 
             local cid, charName
-            local ok, player = pcall(function() return exports['cipher-admin']:GetPlayer(pSrc) end)
+            local ok, player = pcall(function() return exports['XS-AdminMenu']:GetPlayer(pSrc) end)
             if ok and player and player.PlayerData then
                 cid = player.PlayerData.citizenid
                 local ci = player.PlayerData.charinfo

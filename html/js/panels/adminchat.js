@@ -1,4 +1,4 @@
-// Cipher-Admin -- Admin Chat (shell HTML is in index.html; this handles messages only)
+// XS-AdminMenu -- Admin Chat (shell HTML is in index.html; this handles messages only)
 
 const _chatMessages = [];
 let _chatUnread   = 0;
@@ -53,7 +53,7 @@ function chatSend() {
     const msg = input.value.trim();
     if (!msg) return;
     input.value = '';
-    fetch('https://cipher-admin/adminChat', {
+    fetch(`https://${CA_RESOURCE}/adminChat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: msg })

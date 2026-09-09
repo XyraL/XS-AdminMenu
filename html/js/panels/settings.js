@@ -1,4 +1,4 @@
-// Cipher-Admin — Settings Panel
+// XS-AdminMenu — Settings Panel
 //
 // Per-admin interface preferences, layered over the server's Config.Theme.
 //
@@ -11,7 +11,7 @@
 const CA_SETTINGS_KEY = 'ca_settings';
 
 const ACCENT_PRESETS = [
-    { name: 'Cipher Red', hex: '#e5484d' },
+    { name: 'XyraL Red', hex: '#e5484d' },
     { name: 'Amber',      hex: '#f5a524' },
     { name: 'Green',      hex: '#30d158' },
     { name: 'Cyan',       hex: '#22d3ee' },

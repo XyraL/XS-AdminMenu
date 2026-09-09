@@ -1,14 +1,14 @@
--- Cipher-Admin Server — Ban & Warning System
+-- XS-AdminMenu Server — Ban & Warning System
 
-local IsAdmin       = function(src) return exports['cipher-admin']:IsAdmin(src) end
-local HasPermission = function(src, p) return exports['cipher-admin']:HasPermission(src, p) end
-local GetAdminCache = function(src) return exports['cipher-admin']:GetAdminCache(src) end
-local Audit         = function(...) exports['cipher-admin']:Audit(...) end
-local GetIds        = function(src) return exports['cipher-admin']:GetIdentifiers(src) end
+local IsAdmin       = function(src) return exports['XS-AdminMenu']:IsAdmin(src) end
+local HasPermission = function(src, p) return exports['XS-AdminMenu']:HasPermission(src, p) end
+local GetAdminCache = function(src) return exports['XS-AdminMenu']:GetAdminCache(src) end
+local Audit         = function(...) exports['XS-AdminMenu']:Audit(...) end
+local GetIds        = function(src) return exports['XS-AdminMenu']:GetIdentifiers(src) end
 
 local AttachIds = function(banId, src, license)
     local ok, n = pcall(function()
-        return exports['cipher-admin']:AttachBanIdentifiers(banId, src, license)
+        return exports['XS-AdminMenu']:AttachBanIdentifiers(banId, src, license)
     end)
     return ok and n or 0
 end
@@ -18,7 +18,7 @@ end
 -- three-column check that used to be here.
 
 -- ── Issue ban ─────────────────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:banPlayer', function(src, data)
+lib.callback.register('XS-AdminMenu:server:banPlayer', function(src, data)
     if not IsAdmin(src) then return false end
 
     local isPerm = data.duration == 0 or data.permanent == true
@@ -61,7 +61,7 @@ lib.callback.register('cipher-admin:server:banPlayer', function(src, data)
     -- above. Offline bans fall back to the license the framework recorded —
     -- which is why the identifiers table is keyed on license, not citizenid.
     if not license and tCid then
-        local ok, l = pcall(function() return exports['cipher-admin']:LicenseForCitizenId(tCid) end)
+        local ok, l = pcall(function() return exports['XS-AdminMenu']:LicenseForCitizenId(tCid) end)
         if ok then license = l end
     end
     local attached = AttachIds(banId, tSrc, license)
@@ -119,7 +119,7 @@ end
 exports('SystemBan', SystemBan)
 
 -- ── Unban ─────────────────────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:unban', function(src, data)
+lib.callback.register('XS-AdminMenu:server:unban', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'unban') then return false end
     local a = GetAdminCache(src)
@@ -130,7 +130,7 @@ lib.callback.register('cipher-admin:server:unban', function(src, data)
 end)
 
 -- ── Get ban list ──────────────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:getBans', function(src, data)
+lib.callback.register('XS-AdminMenu:server:getBans', function(src, data)
     if not IsAdmin(src) then return nil end
     data = data or {}
     local where, params = { 'is_active = 1' }, {}
@@ -149,7 +149,7 @@ end)
 -- How many times this character has been banned before. The ban modal uses it
 -- to suggest the next rung of the ladder — repeat offenders climb, first-timers
 -- start at the bottom.
-lib.callback.register('cipher-admin:server:getBanHistory', function(src, data)
+lib.callback.register('XS-AdminMenu:server:getBanHistory', function(src, data)
     if not IsAdmin(src) then return nil end
     local cid = data and data.citizenid
     if not cid or cid == '' then return { count = 0 } end
@@ -162,7 +162,7 @@ lib.callback.register('cipher-admin:server:getBanHistory', function(src, data)
     return { count = count, last = last }
 end)
 
-lib.callback.register('cipher-admin:server:warnPlayer', function(src, data)
+lib.callback.register('XS-AdminMenu:server:warnPlayer', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'warn') then return false end
 
@@ -177,7 +177,7 @@ lib.callback.register('cipher-admin:server:warnPlayer', function(src, data)
     -- Notify player if online
     local tSrc = tonumber(data.targetSrc)
     if tSrc then
-        TriggerClientEvent('cipher-admin:client:receiveWarning', tSrc, {
+        TriggerClientEvent('XS-AdminMenu:client:receiveWarning', tSrc, {
             reason    = data.reason,
             adminName = aName,
         })
@@ -190,7 +190,7 @@ lib.callback.register('cipher-admin:server:warnPlayer', function(src, data)
             if threshold.action == 'kick' and tSrc then
                 DropPlayer(tSrc, threshold.reason)
             elseif threshold.action == 'tempban' then
-                lib.callback.await('cipher-admin:server:banPlayer', false, src, {
+                lib.callback.await('XS-AdminMenu:server:banPlayer', false, src, {
                     targetSrc  = tSrc,
                     targetName = data.playerName,
                     targetCid  = data.citizenid,
@@ -207,13 +207,13 @@ lib.callback.register('cipher-admin:server:warnPlayer', function(src, data)
 end)
 
 -- ── Get warnings for a player ─────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:getWarnings', function(src, citizenid)
+lib.callback.register('XS-AdminMenu:server:getWarnings', function(src, citizenid)
     if not IsAdmin(src) then return nil end
     return MySQL.query.await('SELECT * FROM admin_warnings WHERE citizenid=? ORDER BY created_at DESC', { citizenid })
 end)
 
 -- ── Delete warning ────────────────────────────────────────────────────────────
-lib.callback.register('cipher-admin:server:deleteWarning', function(src, data)
+lib.callback.register('XS-AdminMenu:server:deleteWarning', function(src, data)
     if not IsAdmin(src) then return false end
     if not HasPermission(src, 'warn') then return false end
     MySQL.update.await('DELETE FROM admin_warnings WHERE id=?', { data.warnId })
@@ -222,7 +222,7 @@ lib.callback.register('cipher-admin:server:deleteWarning', function(src, data)
 end)
 
 -- Client receives warning notification
-RegisterNetEvent('cipher-admin:client:receiveWarning')
-AddEventHandler('cipher-admin:client:receiveWarning', function(data)
+RegisterNetEvent('XS-AdminMenu:client:receiveWarning')
+AddEventHandler('XS-AdminMenu:client:receiveWarning', function(data)
     -- handled in client/main.lua via NUI or lib.notify
 end)

@@ -1,8 +1,8 @@
--- Cipher-Admin Server — Vehicle Spawner
+-- XS-AdminMenu Server — Vehicle Spawner
 
-local IsAdmin       = function(src) return exports['cipher-admin']:IsAdmin(src) end
-local HasPermission = function(src, p) return exports['cipher-admin']:HasPermission(src, p) end
-local Audit         = function(...) exports['cipher-admin']:Audit(...) end
+local IsAdmin       = function(src) return exports['XS-AdminMenu']:IsAdmin(src) end
+local HasPermission = function(src, p) return exports['XS-AdminMenu']:HasPermission(src, p) end
+local Audit         = function(...) exports['XS-AdminMenu']:Audit(...) end
 
 -- ── Vehicle categories and models ─────────────────────────────────────────────
 -- Full list — servers can override in config
@@ -148,8 +148,8 @@ end
 -- Keys for resources whose API lives on the server. qbx_vehiclekeys exposes
 -- GiveKeys(source, vehicle) here and nowhere on the client, which is why
 -- calling it client-side reported "could not give keys".
-RegisterNetEvent('cipher-admin:server:giveVehicleKeys')
-AddEventHandler('cipher-admin:server:giveVehicleKeys', function(netId, plate)
+RegisterNetEvent('XS-AdminMenu:server:giveVehicleKeys')
+AddEventHandler('XS-AdminMenu:server:giveVehicleKeys', function(netId, plate)
     local src = source
     if not IsAdmin(src) then return end
 
@@ -173,11 +173,11 @@ AddEventHandler('cipher-admin:server:giveVehicleKeys', function(netId, plate)
     end)
 
     if not ok then
-        print(('^3[cipher-admin]^0 keys via "%s" failed: %s'):format(tostring(res), tostring(err)))
+        print(('^3[XS-AdminMenu]^0 keys via "%s" failed: %s'):format(tostring(res), tostring(err)))
     end
 end)
 
-lib.callback.register('cipher-admin:server:getVehicleList', function(src)
+lib.callback.register('XS-AdminMenu:server:getVehicleList', function(src)
     if not IsAdmin(src) then return nil end
     local built = BuildVehicleList()
     return { categories = built.list, source = built.source, count = built.count }
@@ -190,20 +190,20 @@ AddEventHandler('onResourceStart', function(res)
         Wait(3000)
         local built = BuildVehicleList()
         if built.source == 'framework' then
-            print(('[Cipher-Admin] Vehicle spawner: %d vehicles from the framework.'):format(built.count))
+            print(('[XS-AdminMenu] Vehicle spawner: %d vehicles from the framework.'):format(built.count))
         else
-            print('[Cipher-Admin] Vehicle spawner: framework list unavailable, using the built-in models.')
+            print('[XS-AdminMenu] Vehicle spawner: framework list unavailable, using the built-in models.')
         end
     end)
 end)
 
 -- Spawn relay: admin requests spawn → target client spawns
-RegisterNetEvent('cipher-admin:client:getSpawnCoords')
-AddEventHandler('cipher-admin:client:getSpawnCoords', function(model, adminSrc)
+RegisterNetEvent('XS-AdminMenu:client:getSpawnCoords')
+AddEventHandler('XS-AdminMenu:client:getSpawnCoords', function(model, adminSrc)
     -- This fires on client via TriggerClientEvent; handled there
 end)
 
-RegisterNetEvent('cipher-admin:server:spawnVehCoords')
-AddEventHandler('cipher-admin:server:spawnVehCoords', function(adminSrc, model, coords)
-    TriggerClientEvent('cipher-admin:client:spawnVehicle', tonumber(adminSrc), model, coords)
+RegisterNetEvent('XS-AdminMenu:server:spawnVehCoords')
+AddEventHandler('XS-AdminMenu:server:spawnVehCoords', function(adminSrc, model, coords)
+    TriggerClientEvent('XS-AdminMenu:client:spawnVehicle', tonumber(adminSrc), model, coords)
 end)

@@ -1,4 +1,4 @@
-// Cipher-Admin — Permissions Panel
+// XS-AdminMenu — Permissions Panel
 
 let _roles      = [];
 let _staffList  = [];
@@ -86,12 +86,12 @@ async function loadPermissions() {
     `;
 
     if (hasPermission('manageroles')) {
-        _roles = await caFetch('cipher-admin:server:getRoles', {}) || [];
+        _roles = await caFetch('XS-AdminMenu:server:getRoles', {}) || [];
         renderRolePermissions();
     }
 
     if (hasPermission('assignroles')) {
-        _staffList = await caFetch('cipher-admin:server:getStaff', {}) || [];
+        _staffList = await caFetch('XS-AdminMenu:server:getStaff', {}) || [];
         renderStaffList();
     }
 }
@@ -139,7 +139,7 @@ async function saveRolePermissions(roleName) {
         const el = document.getElementById(`perm_${roleName}_${p.key}`);
         if (el) perms[p.key] = el.checked;
     });
-    const ok = await caFetch('cipher-admin:server:saveRolePermissions', { role: roleName, permissions: perms });
+    const ok = await caFetch('XS-AdminMenu:server:saveRolePermissions', { role: roleName, permissions: perms });
     if (ok) {
         // Update local cache
         const role = _roles.find(r => r.name === roleName);
@@ -208,14 +208,14 @@ caAction('assignRole',     (d) => assignRole(d.cid, d.name));
 async function searchStaffPlayer() {
     const q = document.getElementById('staff-search')?.value?.trim();
     if (!q) return;
-    const results = await caFetch('cipher-admin:server:searchCharacter', q);
+    const results = await caFetch('XS-AdminMenu:server:searchCharacter', q);
     const el = document.getElementById('staff-search-results');
     if (!el) return;
     if (!results || !results.length) {
         el.innerHTML = '<div class="text-muted text-sm">No players found</div>';
         return;
     }
-    const roles = _roles.length ? _roles : await caFetch('cipher-admin:server:getRoles', {}) || [];
+    const roles = _roles.length ? _roles : await caFetch('XS-AdminMenu:server:getRoles', {}) || [];
     el.innerHTML = results.map(p => `
         <div class="flex items-center gap-8 mb-8">
             <span class="flex-1 font-bold">${esc(p.firstname)} ${esc(p.lastname)} <span class="text-muted text-sm">${esc(p.citizenid)}</span></span>
@@ -231,14 +231,14 @@ async function searchStaffPlayer() {
 async function assignRole(cid, name) {
     const role = document.getElementById('assign-role-' + cid)?.value;
     if (!role) return;
-    await caFetch('cipher-admin:server:assignRole', { citizenid: cid, playerName: name, role });
-    _staffList = await caFetch('cipher-admin:server:getStaff', {}) || [];
+    await caFetch('XS-AdminMenu:server:assignRole', { citizenid: cid, playerName: name, role });
+    _staffList = await caFetch('XS-AdminMenu:server:getStaff', {}) || [];
     renderStaffList();
     showPermTab('staff');
 }
 
 async function removeStaffRole(cid, name) {
-    await caFetch('cipher-admin:server:removeRole', { citizenid: cid, playerName: name });
+    await caFetch('XS-AdminMenu:server:removeRole', { citizenid: cid, playerName: name });
     _staffList = _staffList.filter(s => s.citizenid !== cid);
     renderStaffList();
     showPermTab('staff');
