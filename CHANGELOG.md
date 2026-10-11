@@ -2,6 +2,31 @@
 
 All notable changes to **XS-AdminMenu**.
 
+## [2.0.2] — 2026-10-11
+
+- Fixed spawned cars coming without keys on servers running qb-vehiclekeys
+- Spawning a car from your own player actions gives keys the same way the vehicle spawner does
+- Fixed players on the live map sitting up to 300m from where they really are
+- Renamed to XS-AdminMenu
+
+### Updating
+
+The folder is called XS-AdminMenu now. Remove the old cipher-admin folder, add this one with your config.lua, and change `ensure cipher-admin` to `ensure XS-AdminMenu` in your server.cfg. No SQL to run. The open key is a new keybind, so set it again if you had changed it.
+
+## [2.0.1] — 2026-08-28
+
+- Map pins sit closer to where things are
+
+## [2.0.0] — 2026-08-28
+
+- Live map: every player on a map of San Andreas, updating live. Click anyone to spectate, go to or bring them
+- Warn and ban offline players from the character lookup
+- The ban menu suggests the next step from their history: a day, a week, a month, then permanent
+
+## [1.3.1] — 2026-08-27
+
+- Player names are escaped in the panel
+
 ## [1.3.0] — 2026-08-17
 
 Two new tabs, and a batch of fixes.

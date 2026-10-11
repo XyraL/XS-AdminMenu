@@ -3,7 +3,7 @@ game 'gta5'
 
 name        'XS-AdminMenu'
 description 'Advanced Admin Suite for QBox / QBCore'
-version     '2.0.1'
+version     '2.0.2'
 author      'XyraL'
 
 shared_scripts {
