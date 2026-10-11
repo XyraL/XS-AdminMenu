@@ -145,6 +145,11 @@ local function BuildVehicleList()
     return _cache
 end
 
+-- qb-vehiclekeys takes the plate with the padding GTA puts round it removed.
+local function trim(text)
+    return (tostring(text or ''):gsub('^%s+', ''):gsub('%s+$', ''))
+end
+
 -- Keys for resources whose API lives on the server. qbx_vehiclekeys exposes
 -- GiveKeys(source, vehicle) here and nowhere on the client, which is why
 -- calling it client-side reported "could not give keys".
@@ -153,10 +158,29 @@ AddEventHandler('XS-AdminMenu:server:giveVehicleKeys', function(netId, plate)
     local src = source
     if not IsAdmin(src) then return end
 
-    local veh = NetworkGetEntityFromNetworkId(netId)
-    if not veh or veh == 0 or not DoesEntityExist(veh) then return end
-
     local res = Config.VehicleKeysResource
+
+    if res == 'qb-vehiclekeys' then
+        plate = trim(plate)
+        if plate == '' then return end
+
+        -- Current qb-vehiclekeys gives keys from the server. Older builds only
+        -- have the client event.
+        if not pcall(function() exports['qb-vehiclekeys']:GiveKeys(src, plate) end) then
+            TriggerClientEvent('vehiclekeys:client:SetOwner', src, plate)
+        end
+        return
+    end
+
+    -- A car spawned a moment ago can still be on its way to the server.
+    local veh = 0
+    for _ = 1, 20 do
+        veh = NetworkGetEntityFromNetworkId(tonumber(netId) or 0)
+        if veh ~= 0 and DoesEntityExist(veh) then break end
+        Wait(100)
+    end
+
+    if veh == 0 or not DoesEntityExist(veh) then return end
 
     local ok, err = pcall(function()
         if res == 'qbx_vehiclekeys' then

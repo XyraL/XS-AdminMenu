@@ -367,30 +367,6 @@ AddEventHandler('XS-AdminMenu:server:spawnVehCoords', function(adminSrc, model, 
     TriggerClientEvent('XS-AdminMenu:client:spawnVehicle', tonumber(adminSrc), model, coords)
 end)
 
--- ── Give vehicle keys after admin spawn ──────────────────────────────────────
-RegisterNetEvent('XS-AdminMenu:server:giveVehicleKeys')
-AddEventHandler('XS-AdminMenu:server:giveVehicleKeys', function(plate, model)
-    local src = source
-    if not IsAdmin(src) then return end
-    local p   = Framework.GetPlayer(src)
-    local cid = p and p.PlayerData.citizenid
-
-    -- qbx_vehiclekeys (standard QBX key resource): addKey(plate, citizenid)
-    local ok = cid and pcall(function()
-        exports['qbx_vehiclekeys']:addKey(plate, cid)
-    end)
-    if not ok then
-        -- ox_inventory vehicle_key item fallback
-        local ok2 = pcall(function()
-            exports.ox_inventory:AddItem(src, 'vehicle_key', 1, { plate = plate, label = model })
-        end)
-        if not ok2 then
-            -- Legacy QB key event last resort
-            TriggerClientEvent('vehiclekeys:client:SetOwner', src, plate)
-        end
-    end
-end)
-
 -- ── Noclip visibility broadcast ───────────────────────────────────────────────
 RegisterNetEvent('XS-AdminMenu:server:noclipSync')
 AddEventHandler('XS-AdminMenu:server:noclipSync', function(netId, visible)

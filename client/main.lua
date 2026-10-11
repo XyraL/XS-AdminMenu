@@ -211,8 +211,7 @@ RegisterNUICallback('playerAction', function(data, cb)
                 SetEntityAsMissionEntity(veh, true, true)
                 SetModelAsNoLongerNeeded(hash)
                 TaskWarpPedIntoVehicle(ped, veh, -1)
-                local plate = GetVehicleNumberPlateText(veh)
-                TriggerServerEvent('XS-AdminMenu:server:giveVehicleKeys', plate, model)
+                if Config.GiveKeysOnSpawn ~= false then GiveKeysToVehicle(veh) end
                 Notify({ title = 'Vehicle Spawned', description = model, type = 'success' })
             end)
         end
@@ -672,15 +671,13 @@ function GiveKeysToVehicle(veh)
     local netId = NetworkGetNetworkIdFromEntity(veh)
 
     -- Server-side resources: the server has to make the call.
-    if res == 'qbx_vehiclekeys' or res == 'mk_vehiclekeys' or res == 'custom' then
+    if res == 'qbx_vehiclekeys' or res == 'qb-vehiclekeys' or res == 'mk_vehiclekeys' or res == 'custom' then
         TriggerServerEvent('XS-AdminMenu:server:giveVehicleKeys', netId, plate)
         return true
     end
 
     local ok, err = pcall(function()
-        if res == 'qb-vehiclekeys' then
-            TriggerEvent('vehiclekeys:client:SetOwner', plate)
-        elseif res == 'qs-vehiclekeys' then
+        if res == 'qs-vehiclekeys' then
             exports['qs-vehiclekeys']:GiveKeys(plate, GetEntityModel(veh), true)
         elseif res == 'wasabi_carlock' then
             exports.wasabi_carlock:GiveKey(plate)
