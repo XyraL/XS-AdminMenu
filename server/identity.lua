@@ -324,6 +324,8 @@ AddEventHandler('onResourceStart', function(res)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
     ]])
 
+    while not XSAdminSchemaReady do Wait(100) end
+
     -- Without this, upgrading would silently un-enforce every existing ban:
     -- the new connect check only reads admin_ban_identifiers.
     local backfilled = 0

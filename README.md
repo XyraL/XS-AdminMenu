@@ -38,16 +38,9 @@
 
 1. **Drop the folder** into your `resources` directory.
 
-2. **Import the SQL schema** into your database:
-   ```
-   sql/admin.sql
-   ```
-   This creates tables for roles, assignments, bans, warnings, audit log, and player notes. The resource will also seed default roles on first start.
-
-   The threat-detection and ban-evasion tables (`admin_flags`,
-   `admin_identifiers`, `admin_ban_identifiers`) are created automatically on
-   start, so **upgrading from 1.1.x needs no SQL import**. Existing bans are
-   backfilled into the new identifier matcher on that same start.
+2. **No SQL import needed.** Every table creates itself the first time the
+   resource starts, and the default roles are added for you. `sql/admin.sql` is
+   only there if you'd rather make the tables by hand.
 
 3. **Add to `server.cfg`:**
    ```
@@ -60,9 +53,21 @@
        'license:YOURLICENSEHERE',
    }
    ```
-   Find your license with `print(GetPlayerIdentifierByType(source, 'license'))` in the server console.
+   Copy your license from txAdmin (Players > your name > IDs). With or without
+   `license:` in front both work, and so does a license2, Discord, Steam or
+   FiveM ID. Not sure which is yours? Open the menu in game (F7 or `/admin`):
+   the server console prints the exact line to add.
 
 5. **Restart the server** (or `refresh` + `ensure XS-AdminMenu`).
+
+### "Access Denied" when you open the menu
+
+- Check the server console after you open the menu. It prints the exact line
+  to add to `Config.Owners`.
+- Restart XS-AdminMenu after editing `config.lua`. Changes don't apply until
+  then.
+- Make sure the folder you edited is the one that runs. If an old
+  `cipher-admin` folder is still there, remove it.
 
 ---
 
@@ -71,7 +76,7 @@
 All options are in `config.lua`.
 
 ```lua
--- Your license identifiers — always Owner regardless of DB role
+-- Your license, Discord or Steam ID — always Owner regardless of role
 Config.Owners = { 'license:...' }
 
 -- Default keybind to open the panel (players can rebind in Settings)

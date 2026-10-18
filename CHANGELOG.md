@@ -2,6 +2,18 @@
 
 All notable changes to **XS-AdminMenu**.
 
+## [2.0.3] — 2026-10-18
+
+- Fixed owners getting "Access Denied" even with their license in the config
+- The database tables now create themselves. No SQL import needed
+- Fixed the SQL file failing to import on MySQL
+- Owners can be added with or without `license:` in front, or by Discord, Steam or license2 ID
+- When someone without access opens the menu, the server console shows the exact line to add to the config
+
+### Updating
+
+Replace everything except your config.lua. No SQL to run.
+
 ## [2.0.2] — 2026-10-11
 
 - Fixed spawned cars coming without keys on servers running qb-vehiclekeys

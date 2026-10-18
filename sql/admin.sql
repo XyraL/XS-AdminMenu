@@ -1,12 +1,13 @@
 -- XS-AdminMenu Database Schema
--- Run once before starting the resource
+-- You don't need to run this. XS-AdminMenu creates every table itself when it starts.
+-- It's here if you'd rather create them by hand.
 
 CREATE TABLE IF NOT EXISTS `admin_roles` (
     `id`          INT AUTO_INCREMENT PRIMARY KEY,
     `name`        VARCHAR(50)  NOT NULL UNIQUE,
     `label`       VARCHAR(100) NOT NULL,
     `color`       VARCHAR(20)  DEFAULT '#6366f1',
-    `permissions` JSON         NOT NULL DEFAULT '{}',
+    `permissions` LONGTEXT     NOT NULL,
     `created_at`  TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

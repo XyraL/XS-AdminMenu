@@ -75,12 +75,47 @@ local function GetIdentifiers(src)
     return ids
 end
 
+local function OwnerSet()
+    local list = Config.Owners
+    if type(list) == 'string' then list = { list } end
+    local set, count = {}, 0
+    for k, v in pairs(type(list) == 'table' and list or {}) do
+        local entry = type(k) == 'string' and k or v
+        if type(entry) == 'string' or type(entry) == 'number' then
+            entry = tostring(entry):gsub('%s+', ''):lower()
+            if entry ~= '' and not entry:find('^ip:') then
+                set[entry] = true
+                count = count + 1
+            end
+        end
+    end
+    return set, count
+end
+
 local function IsOwner(src)
-    local ids = GetIdentifiers(src)
-    for _, ownerLicense in ipairs(Config.Owners) do
-        if ids.license == ownerLicense then return true end
+    local owners, count = OwnerSet()
+    if count == 0 then return false end
+    for i = 0, GetNumPlayerIdentifiers(src) - 1 do
+        local id = GetPlayerIdentifier(src, i)
+        if id then
+            id = id:lower()
+            local kind, value = id:match('^([^:]+):(.+)$')
+            if kind and kind ~= 'ip' and (owners[id] or owners[value]) then return true end
+        end
     end
     return false
+end
+
+local _hinted = {}
+
+local function HintNoAccess(src)
+    if _hinted[src] then return end
+    _hinted[src] = true
+    local license = GetPlayerIdentifierByType(src, 'license') or GetPlayerIdentifierByType(src, 'license2')
+    print(('[XS-AdminMenu] %s (id %s) tried to open the menu but has no access.'):format(GetPlayerName(src) or 'Unknown', tostring(src)))
+    if license then
+        print(("[XS-AdminMenu] To make them an owner, add '%s' to Config.Owners in config.lua and restart XS-AdminMenu."):format(license))
+    end
 end
 
 local function LoadRoles()
@@ -253,9 +288,89 @@ end
 -- ── Init ──────────────────────────────────────────────────────────────────────
 local _serverStartTime = os.time()
 
-AddEventHandler('onResourceStart', function(res)
-    if res ~= GetCurrentResourceName() then return end
-    MySQL.query.await([[
+local SCHEMA = {
+    [[
+        CREATE TABLE IF NOT EXISTS `admin_roles` (
+            `id`          INT AUTO_INCREMENT PRIMARY KEY,
+            `name`        VARCHAR(50)  NOT NULL UNIQUE,
+            `label`       VARCHAR(100) NOT NULL,
+            `color`       VARCHAR(20)  DEFAULT '#6366f1',
+            `permissions` LONGTEXT     NOT NULL,
+            `created_at`  TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    ]],
+    [[
+        CREATE TABLE IF NOT EXISTS `admin_assignments` (
+            `id`          INT AUTO_INCREMENT PRIMARY KEY,
+            `citizenid`   VARCHAR(50)  NOT NULL,
+            `player_name` VARCHAR(100) NOT NULL,
+            `role`        VARCHAR(50)  NOT NULL,
+            `assigned_by` VARCHAR(100) NOT NULL,
+            `created_at`  TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE KEY `uk_citizenid` (`citizenid`),
+            KEY `idx_role` (`role`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    ]],
+    [[
+        CREATE TABLE IF NOT EXISTS `admin_bans` (
+            `id`               INT AUTO_INCREMENT PRIMARY KEY,
+            `citizenid`        VARCHAR(50)  DEFAULT NULL,
+            `player_name`      VARCHAR(100) NOT NULL,
+            `license`          VARCHAR(100) DEFAULT NULL,
+            `ip`               VARCHAR(50)  DEFAULT NULL,
+            `discord`          VARCHAR(100) DEFAULT NULL,
+            `reason`           TEXT         NOT NULL,
+            `admin_name`       VARCHAR(100) NOT NULL,
+            `admin_citizenid`  VARCHAR(50)  NOT NULL,
+            `expires_at`       DATETIME     DEFAULT NULL,
+            `is_permanent`     TINYINT(1)   DEFAULT 0,
+            `is_active`        TINYINT(1)   DEFAULT 1,
+            `unbanned_by`      VARCHAR(100) DEFAULT NULL,
+            `created_at`       TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+            KEY `idx_license`  (`license`),
+            KEY `idx_ip`       (`ip`),
+            KEY `idx_active`   (`is_active`),
+            KEY `idx_citizenid`(`citizenid`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    ]],
+    [[
+        CREATE TABLE IF NOT EXISTS `admin_warnings` (
+            `id`              INT AUTO_INCREMENT PRIMARY KEY,
+            `citizenid`       VARCHAR(50)  NOT NULL,
+            `player_name`     VARCHAR(100) NOT NULL,
+            `reason`          TEXT         NOT NULL,
+            `admin_name`      VARCHAR(100) NOT NULL,
+            `admin_citizenid` VARCHAR(50)  NOT NULL,
+            `created_at`      TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+            KEY `idx_citizenid` (`citizenid`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    ]],
+    [[
+        CREATE TABLE IF NOT EXISTS `admin_audit` (
+            `id`               INT AUTO_INCREMENT PRIMARY KEY,
+            `action`           VARCHAR(100) NOT NULL,
+            `admin_name`       VARCHAR(100) NOT NULL,
+            `admin_citizenid`  VARCHAR(50)  NOT NULL,
+            `target_name`      VARCHAR(100) DEFAULT NULL,
+            `target_citizenid` VARCHAR(50)  DEFAULT NULL,
+            `details`          TEXT         DEFAULT NULL,
+            `created_at`       TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+            KEY `idx_admin`   (`admin_citizenid`),
+            KEY `idx_created` (`created_at`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    ]],
+    [[
+        CREATE TABLE IF NOT EXISTS `admin_notes` (
+            `id`              INT AUTO_INCREMENT PRIMARY KEY,
+            `citizenid`       VARCHAR(50)  NOT NULL,
+            `note`            TEXT         NOT NULL,
+            `admin_name`      VARCHAR(100) NOT NULL,
+            `admin_citizenid` VARCHAR(50)  NOT NULL,
+            `created_at`      TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+            KEY `idx_citizenid` (`citizenid`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    ]],
+    [[
         CREATE TABLE IF NOT EXISTS `admin_reports` (
             `id` int(11) NOT NULL AUTO_INCREMENT,
             `citizenid` varchar(50) DEFAULT NULL,
@@ -268,13 +383,34 @@ AddEventHandler('onResourceStart', function(res)
             `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (`id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-    ]])
+    ]],
+}
+
+XSAdminSchemaReady = false
+
+local function CreateTables()
+    for _, sql in ipairs(SCHEMA) do
+        local ok, err = pcall(MySQL.query.await, sql)
+        if not ok then
+            print(('^1[XS-AdminMenu] Could not create a table: %s^0'):format(tostring(err)))
+        end
+    end
+    XSAdminSchemaReady = true
+end
+
+AddEventHandler('onResourceStart', function(res)
+    if res ~= GetCurrentResourceName() then return end
+    CreateTables()
     SeedDefaultRoles()
     LoadRoles()
     LoadAssignments()
     local roleCount = 0
     for _ in pairs(_roles) do roleCount = roleCount + 1 end
-    print('[XS-AdminMenu] Ready. Roles loaded: ' .. roleCount)
+    local _, ownerCount = OwnerSet()
+    print(('[XS-AdminMenu] Ready. Roles loaded: %d. Owners in config: %d.'):format(roleCount, ownerCount))
+    if ownerCount == 0 then
+        print('^3[XS-AdminMenu] No owners set yet. Open the menu in game and the console will show the line to add to Config.Owners.^0')
+    end
 end)
 
 -- ── Join-time tracking (for online duration) ─────────────────────────────────
@@ -285,6 +421,7 @@ AddEventHandler('playerDropped', function()
     if a and a.citizenid then _dutyAdmins[a.citizenid] = nil end
     _adminCache[source] = nil
     _joinTimes[source]  = nil
+    _hinted[source]     = nil
 end)
 
 -- ── Admin Chat ────────────────────────────────────────────────────────────────
@@ -309,14 +446,22 @@ AddEventHandler('XS-AdminMenu:server:adminChat', function(message)
 end)
 
 -- ── NUI: Open admin panel ─────────────────────────────────────────────────────
+local function Count(sql)
+    local ok, n = pcall(MySQL.scalar.await, sql)
+    return ok and tonumber(n) or 0
+end
+
 lib.callback.register('XS-AdminMenu:server:open', function(src)
-    if not IsAdmin(src) then return nil end
+    if not IsAdmin(src) then
+        HintNoAccess(src)
+        return nil
+    end
     local a = _adminCache[src]
 
     -- Gather online player count, active bans today, warnings today
-    local activeBans  = MySQL.scalar.await("SELECT COUNT(*) FROM admin_bans WHERE is_active=1") or 0
-    local warnToday   = MySQL.scalar.await("SELECT COUNT(*) FROM admin_warnings WHERE DATE(created_at)=CURDATE()") or 0
-    local bansToday   = MySQL.scalar.await("SELECT COUNT(*) FROM admin_bans WHERE DATE(created_at)=CURDATE()") or 0
+    local activeBans  = Count("SELECT COUNT(*) FROM admin_bans WHERE is_active=1")
+    local warnToday   = Count("SELECT COUNT(*) FROM admin_warnings WHERE DATE(created_at)=CURDATE()")
+    local bansToday   = Count("SELECT COUNT(*) FROM admin_bans WHERE DATE(created_at)=CURDATE()")
 
     -- Count online admins
     local onlineAdmins = 0

@@ -1,8 +1,11 @@
 Config = {}
 
 -- ── Owner Identifiers ─────────────────────────────────────────────────────────
--- Players with ANY of these identifiers are always Owner regardless of DB role.
--- Find yours with: print(GetPlayerIdentifierByType(source, 'license'))
+-- Owners always have full access, whatever their role.
+-- Add your license from txAdmin (Players > your name > IDs). With or without
+-- "license:" in front both work, and so does a license2, Discord, Steam or FiveM ID.
+-- Not sure what yours is? Open the menu in game (F7 or /admin) and the server
+-- console prints the exact line to add here. Restart XS-AdminMenu after editing.
 Config.Owners = {
     '',
 }
