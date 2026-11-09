@@ -131,10 +131,7 @@ async function selectPlayer(src) {
     const p = _players.find(x => x.src === src);
     if (!p) return;
     _selectedPlayer = p;
-
-    // Fetch full profile
-    const profile = await caFetch('XS-AdminMenu:server:getCharacter', p.citizenid);
-    openPlayerProfile({ ...p, ...profile, onlineSrc: src });
+    pfOpen(p.citizenid, src, p);
 }
 
 function _fmtOnlineTime(secs) {
@@ -143,198 +140,6 @@ function _fmtOnlineTime(secs) {
     const m = Math.floor((secs % 3600) / 60);
     if (h > 0) return h + 'h ' + m + 'm';
     return m + 'm';
-}
-
-// ── Player Profile ────────────────────────────────────────────────────────────
-// `kind` picks the dispatcher: 'do' runs playerAction directly, 'open' routes
-// to whichever modal that action needs (see the caAction registrations at the
-// bottom of this file).
-function _profileButtons(p, src, defs) {
-    return defs.filter((d) => d.show).map((d) => `
-        <button class="btn ${d.cls || 'btn-ghost'} btn-sm"
-            data-ca-action="playerBtn"
-            data-kind="${escAttr(d.kind)}"
-            data-act="${escAttr(d.act)}"
-            data-src="${escNum(src)}"
-            data-cid="${escAttr(p.citizenid)}"
-            data-name="${escAttr(p.name || '')}"
-            ${d.state !== undefined ? `data-state="${escAttr(d.state)}"` : ''}>
-            ${icon(d.ico)}<span>${esc(d.label)}</span>
-        </button>`).join('');
-}
-
-function renderPlayerProfile(p) {
-    const ci  = p.charinfo || {};
-    const job = p.job      || {};
-    const mo  = p.money    || {};
-
-    const canKick        = hasPermission('kick');
-    const canWarn        = hasPermission('warn');
-    const canTempBan     = hasPermission('tempban');
-    const canFreeze      = hasPermission('freeze');
-    const canSpectate    = hasPermission('spectate');
-    const canBring       = hasPermission('bring');
-    const canGoto        = hasPermission('teleport');
-    const canRevive      = hasPermission('revive');
-    const canHeal        = hasPermission('heal');
-    const canNoclip      = hasPermission('noclip');
-    const canInvisible   = hasPermission('invisible');
-    const canSetJob      = hasPermission('setjob');
-    const canSetCash     = hasPermission('setcash');
-    const canSetBank     = hasPermission('setbank');
-    const canViewInv     = hasPermission('viewinv');
-    const canGiveItem    = hasPermission('giveitem');
-    const canClearInv    = hasPermission('clearinv');
-    const canSpawnVeh    = hasPermission('spawnveh');
-    const canDelVeh      = hasPermission('deleteveh');
-    const canAddNote     = hasPermission('addnote');
-    const canViewNotes   = hasPermission('viewnotes');
-    const canSlap        = hasPermission('slap');
-    const canDm          = hasPermission('dm');
-    const canResetPos    = hasPermission('resetpos');
-    const canScreenshot  = hasPermission('screenshot');
-    const canGiveWeapon  = hasPermission('giveweapon');
-    const canSummonAll   = hasPermission('summonall');
-    const canKill        = hasPermission('killplayer');
-    const canSetHealth   = hasPermission('sethealth');
-    const canEject       = hasPermission('eject');
-    const canMute        = hasPermission('mute');
-    const canViewIds     = hasPermission('viewids');
-    const canSendTo      = hasPermission('teleport');
-
-    const src = p.onlineSrc || p.src;
-
-    // Whitelisted to a hex literal rather than escaped: this lands inside a
-    // style attribute, where escaping alone wouldn't stop a value like
-    // "red;position:fixed;top:0" from restyling the whole panel.
-    const profileColor = /^#[0-9a-fA-F]{3,8}$/.test(p.adminColor || '') ? p.adminColor : 'var(--accent)';
-
-    // Every button below carries its target as data-* attributes and is
-    // dispatched by the delegated listener in core.js. These used to be inline
-    // onclick handlers with the player's name interpolated into a quoted JS
-    // string, which meant a name containing an apostrophe (O'Brien) broke
-    // every button on the profile, and a crafted name ran as script in the
-    // admin's own session.
-    document.getElementById('player-profile-inner').innerHTML = `
-        <div class="profile-header">
-            <div class="profile-avatar">${icon('players')}</div>
-            <div>
-                <div class="profile-name">${esc(p.name || (ci.firstname + ' ' + ci.lastname))}</div>
-                <div class="profile-cid">${esc(p.citizenid)} · ID ${escNum(src)}</div>
-                ${p.isAdmin ? `<span class="badge badge-accent" style="margin-top:4px;background:${profileColor}22;color:${profileColor}">${esc(p.adminRole)}</span>` : ''}
-            </div>
-        </div>
-
-        <!-- Actions -->
-        <div class="profile-section">
-            <div class="profile-section-title">Actions</div>
-            <div class="profile-actions">
-                ${_profileButtons(p, src, [
-                    { show: canGoto,       kind: 'do',   act: 'goto',          ico: 'goto',      label: 'Goto' },
-                    { show: canBring,      kind: 'do',   act: 'bring',         ico: 'bring',     label: 'Bring' },
-                    { show: canSpectate,   kind: 'do',   act: 'spectate',      ico: 'spectate',  label: 'Spectate' },
-                    { show: canFreeze,     kind: 'do',   act: 'freeze',        ico: 'freeze',    label: 'Freeze',   state: 'true' },
-                    { show: canFreeze,     kind: 'do',   act: 'freeze',        ico: 'freeze',    label: 'Unfreeze', state: 'false' },
-                    { show: canRevive,     kind: 'do',   act: 'revive',        ico: 'revive',    label: 'Revive' },
-                    { show: canHeal,       kind: 'do',   act: 'heal',          ico: 'heal',      label: 'Heal' },
-                    { show: canSpawnVeh,   kind: 'open', act: 'spawnveh',      ico: 'spawner',   label: 'Spawn Veh' },
-                    { show: canDelVeh,     kind: 'do',   act: 'deletevehicle', ico: 'trash',     label: 'Del Veh' },
-                    { show: canViewInv,    kind: 'open', act: 'inventory',     ico: 'inventory', label: 'Inventory' },
-                    { show: canScreenshot, kind: 'do',   act: 'screenshot',    ico: 'camera',    label: 'Screenshot' },
-                    { show: canScreenshot, kind: 'open', act: 'watch',         ico: 'spectate',  label: 'Watch Live' },
-                    { show: canSlap,       kind: 'do',   act: 'slap',          ico: 'warn',      label: 'Slap' },
-                    { show: canResetPos,   kind: 'do',   act: 'resetpos',      ico: 'goto',      label: 'Reset Pos' },
-                    { show: canDm,         kind: 'open', act: 'dm',            ico: 'adminchat', label: 'DM' },
-                    { show: canGiveWeapon, kind: 'open', act: 'giveweapon',    ico: 'shield',    label: 'Give Weapon' },
-                    { show: canSetHealth,  kind: 'open', act: 'sethealth',     ico: 'heal',      label: 'Set HP' },
-                    { show: canEject,      kind: 'open', act: 'eject',         ico: 'kick',      label: 'Eject' },
-                    { show: canSendTo,     kind: 'open', act: 'sendto',        ico: 'goto',      label: 'Send To' },
-                    { show: canViewIds,    kind: 'open', act: 'identifiers',   ico: 'search',    label: 'Identifiers' },
-                ])}
-            </div>
-        </div>
-
-        <!-- Moderation -->
-        <div class="profile-section">
-            <div class="profile-section-title">Moderation</div>
-            <div class="profile-actions">
-                ${_profileButtons(p, src, [
-                    { show: canWarn,    kind: 'open', act: 'warn',  ico: 'warn',  label: 'Warn', cls: 'btn-amber' },
-                    { show: canMute,    kind: 'open', act: 'mute',  ico: 'adminchat', label: 'Mute', cls: 'btn-amber' },
-                    { show: canKick,    kind: 'open', act: 'kick',  ico: 'kick',  label: 'Kick' },
-                    { show: canKill,    kind: 'open', act: 'kill',  ico: 'warn',  label: 'Kill', cls: 'btn-danger' },
-                    { show: canTempBan, kind: 'open', act: 'ban',   ico: 'bans',  label: 'Ban',  cls: 'btn-danger' },
-                ])}
-            </div>
-        </div>
-
-        <!-- Character info -->
-        <div class="profile-section">
-            <div class="profile-section-title">Character</div>
-            <div class="profile-row"><span class="profile-row-label">DOB</span><span class="profile-row-value">${ci.birthdate || 'N/A'}</span></div>
-            <div class="profile-row"><span class="profile-row-label">Phone</span><span class="profile-row-value">${ci.phone || 'N/A'}</span></div>
-            <div class="profile-row"><span class="profile-row-label">Gender</span><span class="profile-row-value">${ci.gender === 0 ? 'Male' : 'Female'}</span></div>
-            <div class="profile-row"><span class="profile-row-label">Job</span><span class="profile-row-value">${esc(job.label || job.name || 'N/A')}</span></div>
-            <div class="profile-row"><span class="profile-row-label">Grade</span><span class="profile-row-value">${esc(job.grade && job.grade.name || 'N/A')}</span></div>
-        </div>
-
-        <!-- Money -->
-        <div class="profile-section">
-            <div class="profile-section-title">Economy</div>
-            <div class="profile-row">
-                <span class="profile-row-label">Cash</span>
-                <span class="profile-row-value">${formatMoney(mo.cash)}</span>
-            </div>
-            <div class="profile-row">
-                <span class="profile-row-label">Bank</span>
-                <span class="profile-row-value">${formatMoney(mo.bank)}</span>
-            </div>
-            ${canSetCash ? `<button class="btn btn-ghost btn-sm w-full mt-8" data-ca-action="openSetMoney"
-                data-src="${escNum(src)}" data-cid="${escAttr(p.citizenid)}" data-name="${escAttr(p.name || '')}"
-                data-cash="${escNum(mo.cash || 0)}" data-bank="${escNum(mo.bank || 0)}">Edit Money</button>` : ''}
-            ${canSetJob  ? `<button class="btn btn-ghost btn-sm w-full mt-8" data-ca-action="openSetJob"
-                data-src="${escNum(src)}" data-cid="${escAttr(p.citizenid)}" data-name="${escAttr(p.name || '')}">Change Job</button>` : ''}
-        </div>
-
-        <!-- Warnings -->
-        <div class="profile-section">
-            <div class="profile-section-title">Warnings (${(p.warnings || []).length})</div>
-            ${(p.warnings && p.warnings.length) ? p.warnings.map(w => `
-                <div class="activity-item" style="align-items:flex-start">
-                    <div class="activity-icon">${icon('warn')}</div>
-                    <div class="activity-body" style="flex:1">
-                        <div class="activity-action">${esc(w.reason)}</div>
-                        <div class="activity-detail">by ${esc(w.admin_name)} · ${esc(formatDate(w.created_at))}</div>
-                    </div>
-                    ${canWarn ? `<button class="btn btn-ghost btn-xs" style="color:var(--red);flex-shrink:0" data-ca-action="deleteWarning"
-                        data-id="${escNum(w.id)}" data-cid="${escAttr(p.citizenid)}" data-src="${escNum(src)}">${icon('close')}</button>` : ''}
-                </div>
-            `).join('') : '<div class="text-muted text-sm">No warnings</div>'}
-        </div>
-
-        <!-- Notes -->
-        ${canViewNotes ? `
-        <div class="profile-section">
-            <div class="profile-section-title">Admin Notes</div>
-            ${(p.notes && p.notes.length) ? p.notes.map(n => `
-                <div class="activity-item">
-                    <div class="activity-icon">${icon('note')}</div>
-                    <div class="activity-body">
-                        <div class="activity-action">${esc(n.note)}</div>
-                        <div class="activity-detail">by ${esc(n.admin_name)} · ${esc(formatDate(n.created_at))}</div>
-                    </div>
-                </div>
-            `).join('') : '<div class="text-muted text-sm">No notes</div>'}
-            ${canAddNote ? `
-            <div class="flex gap-4 mt-8">
-                <input class="input" id="note-input-${escAttr(p.citizenid)}" placeholder="Add a note...">
-                <button class="btn btn-primary btn-sm" data-ca-action="addNote"
-                    data-cid="${escAttr(p.citizenid)}" data-name="${escAttr(p.name || '')}">Add</button>
-            </div>` : ''}
-        </div>` : ''}
-
-        <button class="btn btn-ghost btn-sm w-full mt-8" onclick="closePlayerProfile()">${icon('close')} Close</button>
-    `;
 }
 
 // ── Player action relay ───────────────────────────────────────────────────────
@@ -915,12 +720,10 @@ async function openIdentifiersModal(src, cid, name) {
         + 'Select a value to copy. Viewing identifiers is written to the audit log.</div>';
 }
 
-window._profileButtons     = _profileButtons;
 window.loadPlayers         = loadPlayers;
 window.filterPlayers       = filterPlayers;
 window.sortPlayers         = sortPlayers;
 window.selectPlayer        = selectPlayer;
-window.renderPlayerProfile = renderPlayerProfile;
 window.playerAction        = playerAction;
 window.openKickModal       = openKickModal;
 window.doKick              = doKick;

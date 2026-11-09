@@ -106,11 +106,10 @@ Config.DefaultPanel = 'dashboard'   -- panel shown when the menu opens
 
 -- Interface. Applied at runtime — recolour the panel without touching CSS.
 Config.Theme = {
-    Accent    = '#e5484d',
+    Accent    = '#3b82f6',
     Side      = 'right',    -- which edge the drawer slides from
     Width     = '80vw',
     MaxWidth  = '1360px',
-    Scanlines = true,
     Dim       = 0.45,       -- backdrop opacity behind the drawer
 }
 
@@ -210,6 +209,12 @@ To assign a role to a player, use the Permissions panel or set it directly in th
 
 ### Player Management
 - Live player list with online time tracker and notes tooltip
+- **Player profile** — click a player for a full screen on them:
+  - **Overview:** money, health, armour, online time, character details, job and gang, hunger, thirst and stress, where they are and what they drive, their record and recent staff actions
+  - **Money:** add, remove or set cash, bank and crypto
+  - **Job & Gang:** pick any job or gang and its grade from your server's list, clock them on or off duty
+  - **Inventory**, owned **Vehicles**, every **Action**, and **Moderation** with warnings, bans, notes and staff history
+  - Money, job and gang changes work on offline characters too
 - Kick, warn, temp/permban with reason
 - **Mute** — chat mute with duration presets, survives restarts
 - Freeze / unfreeze
@@ -237,9 +242,8 @@ To assign a role to a player, use the Permissions panel or set it directly in th
 Per-admin interface preferences, stored on your machine rather than the server
 — so one person's choice is not everyone's.
 
-- Accent colour: eight presets plus a custom hex
+- Accent colour: nine presets plus a custom hex
 - Which side the drawer opens from, its width, and the backdrop dim
-- Scanline texture on or off
 - Which panel opens first
 
 Layered over the server's `Config.Theme`, so the owner's default stays the

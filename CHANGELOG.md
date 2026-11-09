@@ -2,6 +2,17 @@
 
 All notable changes to **XS-AdminMenu**.
 
+## [2.1.0] — 2026-11-09
+
+- New look: dark navy with a blue accent and a police lightbar along the top. The scanline texture is gone
+- Clicking a player opens a full profile: overview, money, job and gang, inventory, vehicles, actions and moderation
+- Add, remove or set cash, bank and crypto, and set any job or gang and its grade from your server's list
+- Money, job and gang changes work on offline characters too
+- Fixed online time showing a dash for every player
+- Fixed the server capacity bar showing empty in game
+
+Replace everything except your config.lua. No SQL to run.
+
 ## [2.0.3] — 2026-10-18
 
 - Fixed owners getting "Access Denied" even with their license in the config

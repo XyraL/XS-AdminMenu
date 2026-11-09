@@ -3,7 +3,7 @@ game 'gta5'
 
 name        'XS-AdminMenu'
 description 'Advanced Admin Suite for QBox / QBCore'
-version     '2.0.3'
+version     '2.1.0'
 author      'XyraL'
 
 shared_scripts {
@@ -36,6 +36,7 @@ server_scripts {
     'server/identity.lua',
     'server/threats.lua',
     'server/players.lua',
+    'server/profile.lua',
     'server/livemap.lua',
     'server/bans.lua',
     'server/mutes.lua',
@@ -62,6 +63,7 @@ files {
     -- Map tile pyramid, shared with the MDT's live map.
     'html/assets/maps/tiles/*.webp',
     'html/js/panels/players.js',
+    'html/js/panels/profile.js',
     'html/js/panels/character.js',
     'html/js/panels/spawner.js',
     'html/js/panels/inventory.js',

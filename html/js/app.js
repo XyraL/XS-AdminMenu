@@ -60,13 +60,14 @@ function onOpen(data) {
     CA.onDuty           = data.onDuty           || false;
     CA.dutyAdmins       = data.dutyAdmins       || {};
     CA.lists            = data.lists            || {};
-    CA.serverTheme      = data.theme            || {};
+    CA.serverTheme      = Object.assign({}, data.theme || {});
+    if (String(CA.serverTheme.Accent || '').toLowerCase() === '#e5484d') CA.serverTheme.Accent = '#3b82f6';
 
     // Server theme first, then this admin's own overrides on top. Settings are
     // per-machine, so an owner's Config.Theme stays the default for everyone
     // who has not changed anything.
     if (typeof caApplyEffectiveTheme === 'function') caApplyEffectiveTheme();
-    else applyTheme(data.theme);
+    else applyTheme(CA.serverTheme);
 
     document.getElementById('admin-overlay').classList.remove('hidden');
     document.getElementById('sidebar-server-name').textContent = data.serverName;
@@ -122,8 +123,6 @@ function applyTheme(theme) {
         wrapper.style.boxShadow   = '8px 0 60px rgba(0,0,0,0.8)';
         wrapper.style.animation   = 'slideInLeft 0.22s cubic-bezier(0.16,1,0.3,1)';
     }
-
-    if (theme.Scanlines === false) wrapper?.classList.add('no-scanlines');
 
     const dim = Number(theme.Dim);
     if (overlay && Number.isFinite(dim) && dim >= 0 && dim <= 1) {

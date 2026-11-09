@@ -33,16 +33,13 @@ Config.DefaultPanel = 'dashboard'
 -- Applied at runtime — a resource restart, no CSS editing. Accent drives nav
 -- state, focus rings, headings and the lit edge of the drawer.
 --
--- Accent and danger are separated by weight, not hue: accents are thin bars and
--- outlines, destructive actions get solid fills. Change Accent and Ban/Delete
--- stay red on purpose — a filled red button always means "this destroys
--- something", whatever colour the rest of the panel is.
+-- Ban and Delete stay red whatever accent you pick: a filled red button always
+-- means something is about to be destroyed.
 Config.Theme = {
-    Accent    = '#e5484d',
+    Accent    = '#3b82f6',
     Side      = 'right',   -- 'right' | 'left' — which edge the drawer slides from
     Width     = '80vw',    -- any CSS width; capped by MaxWidth below
     MaxWidth  = '1360px',
-    Scanlines = true,      -- faint screen grain over the panel
     Dim       = 0.45,      -- opacity of the backdrop behind the drawer, 0–1
 }
 

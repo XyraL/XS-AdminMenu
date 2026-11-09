@@ -11,11 +11,12 @@
 const CA_SETTINGS_KEY = 'ca_settings';
 
 const ACCENT_PRESETS = [
-    { name: 'XyraL Red', hex: '#e5484d' },
+    { name: 'Police Blue', hex: '#3b82f6' },
+    { name: 'Sky',        hex: '#7cb4ff' },
+    { name: 'Red',        hex: '#e5484d' },
     { name: 'Amber',      hex: '#f5a524' },
-    { name: 'Green',      hex: '#30d158' },
+    { name: 'Green',      hex: '#2fcf8a' },
     { name: 'Cyan',       hex: '#22d3ee' },
-    { name: 'Blue',       hex: '#3b82f6' },
     { name: 'Indigo',     hex: '#6366f1' },
     { name: 'Violet',     hex: '#a855f7' },
     { name: 'Magenta',    hex: '#ec4899' },
@@ -44,7 +45,6 @@ function caApplyEffectiveTheme() {
         Side:      mine.side      || base.Side,
         Width:     mine.width     || base.Width,
         MaxWidth:  base.MaxWidth,
-        Scanlines: mine.scanlines !== undefined ? mine.scanlines : base.Scanlines,
         Dim:       mine.dim       !== undefined ? mine.dim       : base.Dim,
     });
 }
@@ -55,10 +55,9 @@ function renderSettingsPanel() {
 
     const s    = caLoadSettings();
     const base = CA.serverTheme || {};
-    const accent = s.accent || base.Accent || '#e5484d';
+    const accent = s.accent || base.Accent || '#3b82f6';
     const side   = s.side   || base.Side   || 'right';
     const dim    = s.dim    !== undefined ? s.dim    : (base.Dim !== undefined ? base.Dim : 0.45);
-    const scan   = s.scanlines !== undefined ? s.scanlines : base.Scanlines !== false;
     const width  = s.width  || base.Width  || '80vw';
 
     const panels = [
@@ -126,13 +125,6 @@ function renderSettingsPanel() {
                                value="${escNum(Math.round(dim * 100))}">
                     </div>
 
-                    <div class="form-group">
-                        <label>Scanline texture</label>
-                        <label class="toggle" style="display:inline-flex">
-                            <input type="checkbox" id="set-scan" ${scan ? 'checked' : ''}>
-                            <div class="toggle-track"></div><div class="toggle-thumb"></div>
-                        </label>
-                    </div>
                 </div>
             </div>
 
@@ -168,9 +160,6 @@ function renderSettingsPanel() {
         document.getElementById('set-dim-val').textContent = this.value + '%';
         _settingsPatch({ dim: Number(this.value) / 100 });
     };
-
-    const scan$ = document.getElementById('set-scan');
-    if (scan$) scan$.onchange = function () { _settingsPatch({ scanlines: this.checked }); };
 
     const def$ = document.getElementById('set-default');
     if (def$) def$.onchange = function () { _settingsPatch({ defaultPanel: this.value || undefined }); };

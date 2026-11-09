@@ -24,7 +24,7 @@ const ALL_PERMS = [
     { key: 'mute',        label: 'Mute Players' },
     { key: 'massactions', label: 'Mass Actions' },
     { key: 'viewids',     label: 'View Identifiers' },
-    { key: 'setjob',      label: 'Set Job' },
+    { key: 'setjob',      label: 'Set Job / Gang' },
     { key: 'setgrade',    label: 'Set Grade' },
     { key: 'setcash',     label: 'Set Cash' },
     { key: 'setbank',     label: 'Set Bank' },

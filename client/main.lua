@@ -175,6 +175,9 @@ local PROXY_ENDPOINTS = {
     'XS-AdminMenu:server:mutePlayer',
     'XS-AdminMenu:server:getLiveMap',
     'XS-AdminMenu:server:getBanHistory',
+    'XS-AdminMenu:server:getProfile',
+    'XS-AdminMenu:server:getJobsGangs',
+    'XS-AdminMenu:server:editPlayer',
 }
 
 for _, endpoint in ipairs(PROXY_ENDPOINTS) do

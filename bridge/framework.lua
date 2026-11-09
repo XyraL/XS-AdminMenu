@@ -149,3 +149,24 @@ function Framework.GetWeapons()
 
     return nil
 end
+
+-- { [name] = { label, grades = { [level] = { name, isboss, payment } } } }
+function Framework.GetJobs()
+    if Framework.name == 'qbox' then
+        local ok, jobs = pcall(function() return exports.qbx_core:GetJobs() end)
+        if ok and type(jobs) == 'table' then return jobs end
+    elseif Framework.name == 'qbcore' and Framework.core then
+        return Framework.core.Shared and Framework.core.Shared.Jobs or nil
+    end
+    return nil
+end
+
+function Framework.GetGangs()
+    if Framework.name == 'qbox' then
+        local ok, gangs = pcall(function() return exports.qbx_core:GetGangs() end)
+        if ok and type(gangs) == 'table' then return gangs end
+    elseif Framework.name == 'qbcore' and Framework.core then
+        return Framework.core.Shared and Framework.core.Shared.Gangs or nil
+    end
+    return nil
+end

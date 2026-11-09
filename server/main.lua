@@ -21,6 +21,7 @@ CreateThread(function()
     if XSAdminThreats  == nil then missing[#missing + 1] = 'server/threats.lua'  end
     if XSAdminIdentity == nil then missing[#missing + 1] = 'server/identity.lua' end
     if XSAdminMutes    == nil then missing[#missing + 1] = 'server/mutes.lua'    end
+    if XSAdminProfile  == nil then missing[#missing + 1] = 'server/profile.lua'  end
 
     if #missing == 0 then return end
 
@@ -416,6 +417,11 @@ end)
 -- ── Join-time tracking (for online duration) ─────────────────────────────────
 local _joinTimes = {}
 AddEventHandler('playerConnecting', function() _joinTimes[source] = os.time() end)
+AddEventHandler('playerJoining', function(oldId)
+    local temp = tonumber(oldId)
+    _joinTimes[source] = (temp and _joinTimes[temp]) or _joinTimes[source] or os.time()
+    if temp and temp ~= source then _joinTimes[temp] = nil end
+end)
 AddEventHandler('playerDropped', function()
     local a = _adminCache[source]
     if a and a.citizenid then _dutyAdmins[a.citizenid] = nil end
@@ -939,3 +945,4 @@ exports('HasPermission',  HasPermission)
 exports('GetAdminCache',  function(src) return _adminCache[src] end)
 exports('Audit',          Audit)
 exports('GetIdentifiers', GetIdentifiers)
+exports('GetJoinTime',    function(src) return _joinTimes[tonumber(src) or -1] end)
